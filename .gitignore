@@ -1,0 +1,11 @@
+/node_modules
+/test
+/tests
+/prototype
+/styleguide
+.sass-cache
+npm-debug.lo*
+.DS_Store
+*.zip
+.sass-cache
+svg.json
