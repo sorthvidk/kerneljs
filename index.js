@@ -8,18 +8,6 @@ var Kernel =  {
 module.exports = Kernel;
 
 
-var Box = Kernel.View.extend({
-	initialize: function(){
-		console.log("test", this.el)
-	}
-})
-
-
-!(function(){
-	new Box();
-})();
-
-console.log(Kernel);
 
 
 // !function (root, factory){
