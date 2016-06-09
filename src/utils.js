@@ -1,17 +1,58 @@
-var Generic = require('./generic'),
-	Log = require('./log');
+var Generic = require('../core/generic'),
+	Log = require('../core/log');
 
+
+/**
+ * Utils is a collection of sorthvid auxilliary methods
+ */
 var Utils = Generic.extend({
 
-	find: function(...args){
+	/*
+	 * DOM methods - common jQuery functions with vanilla JS
+	 */
+
+	find: function(arg0, arg1){
 		var result;
-		if ( typeof arguments[0] === "string" ) {
-			result = document.querySelectorAll(arguments[0]);
+		if ( typeof arg1 == "undefined" ) {
+			result = document.querySelectorAll(arg0);
 		}
 		else {
-			result = arguments[0].querySelectorAll(arguments[1]);
+			result = arg0.querySelectorAll(arg1);
 		}
+		
 		return result;
+		
+	},
+	closestByClass: function(el, className) {
+		return this.closest(el, function(_el){ return _el.className === className; }.bind(this));
+	},
+	closestByTag: function(el, tagName) {
+		return this.closest(el, function(_el){ return _el.tagName === tagName; }.bind(this));
+	},
+	closestByID: function(el, id) {
+		return this.closest(el, function(_el){ return _el.id === id; }.bind(this));
+	},
+	closest: function(el, fn) {
+		if ( !(el instanceof Element)) return false;
+		return el && (fn(el) ? el : this.closest(el.parentNode, fn));
+	},
+
+	append:function(el,child){
+		var elem = el;
+
+		if ( typeof el == "string") {
+			elem = this.find(el);
+		}
+		if (elem.length) {
+			elem = elem[0];
+		}
+		elem.appendChild(child);
+	},
+
+	remove:function(el) {
+		var parent = el.parentNode;
+		try {parent.removeChild(el);}
+		catch (e){  }
 	},
 
 	hasClass: function(el, className) {
@@ -57,13 +98,45 @@ var Utils = Generic.extend({
 		}
 	},
 
+
+
+	/**
+	 * Attaches an event listener
+	 * @param {Element} elem - the associated DOMelement
+	 * @param {String} eventName - the event string
+	 * @param {Function} eventHandler - the handler function
+	 */
+	on: function(elem, eventName, eventHandler) {
+		if (elem.addEventListener) {
+			elem.addEventListener(eventName, eventHandler);
+		} else {
+			elem.attachEvent('on' + eventName, function(){
+			  eventHandler.call(elem);
+			});
+		}
+	},
+
+	/**
+	 * Removes an event listener
+	 * @param {Element} elem - the associated DOMelement
+	 * @param {String} eventName - the event string
+	 * @param {Function} eventHandler - the handler function
+	 */
+	off: function(elem, eventName, eventHandler) {
+		if (elem.removeEventListener)
+			elem.removeEventListener(eventName, eventHandler);
+		else
+			elem.detachEvent('on' + eventName, eventHandler);		
+	},
+
+
+	/**
+	 * Checks if the element is within the viewport
+	 * @param {Element} el - the DOMelement in question
+	 */
 	isElementInViewport: function(el) {
 		if (!el) {
 			return
-		}
-		//special bonus for those using jQuery
-		if (typeof jQuery === "function" && el instanceof jQuery) {
-			el = el[0];
 		}
 		var rect = el.getBoundingClientRect();
 		return (
@@ -77,7 +150,6 @@ var Utils = Generic.extend({
 	/*
 	 * single element: createEl("div.class")
 	 * multiple elements: createEl(["div.class", "div.class"])
-	 *
 	 */
 	createEl: function(sel) {
 		var elem;
@@ -90,34 +162,37 @@ var Utils = Generic.extend({
 						elem.appendChild(sel[i]);
 					}
 				} else {
-					elem = build(sel[i]);
+					elem = this.buildEl(sel[i]);
 				}
 			}
 		} else if (typeof sel === "object") {
 
 		} else {
-			elem = build(sel);
+			elem = this.buildEl(sel);
 		}
-
-		function build(s) {
-			var selector = s.split(".");
-			var el = document.createElement(selector[0]);
-			var cl = selector[1] ? selector[1].split(" ") : 0;
-			if (cl.length > 0) {
-				for (var i = 0; i < cl.length; i++) {
-					$(el).addClass(cl[i]);
-				}
-			}
-			return el;
-		}
+		
 		return elem;
 	},
 
+	buildEl: function(s) {
+		var selector = s.split(".");
+		var el = document.createElement(selector[0]);
+		var cl = selector[1] ? selector[1].split(" ") : 0;
+		if (cl.length > 0) {
+			for (var i = 0; i < cl.length; i++) {
+				this.addClass(el, cl[i]);
+			}
+		}
+		return el;
+	},
+
+	/**
+	 * Vanilla way of sniffing accordion content height
+	 * @param {Element} elem - the DOMelement in question
+	 * @param {String} className - the class to add, when the accordion is ready
+	 */
 	getAccordionHeight: function(elem, className) {
 		var height;
-		if (elem instanceof jQuery) {
-			elem = elem[0];
-		}
 		this.removeClass(elem, className);
 		this.addClass(elem, "is--calculation-height");
 		height = elem.getClientRects() ? elem.getClientRects()[0].height : elem.offsetHeight;
@@ -126,6 +201,12 @@ var Utils = Generic.extend({
 		return height;
 	},
 
+
+	/**
+	 * Get url parameter
+	 * @param {String} name - the variable name
+	 * @param {String} url - a way to override the default root of the url parameter
+	 */	
 	getUrlParms: function(name, url) {
 		var url = url || window.location.search;
 		var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -134,6 +215,11 @@ var Utils = Generic.extend({
 		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	},
 
+	/**
+	 * Vanilla site scroll animation
+	 * @param {Element} elem - the DOMelement to scroll to
+	 * @param {Number} scrollDuration - duration of the animation
+	 */
 	scrollTo: function(elem, scrollDuration) {
 		var offset = elem.getClientRects()[0],
 			scrollStep = offset.top > window.scrollY ? -window.scrollY / (scrollDuration / 15) : window.scrollY / (scrollDuration / 15),
@@ -223,13 +309,13 @@ var Utils = Generic.extend({
 
 	screenSize: function(size){
 		var sizes = {
-			"sScreen": 567,
-			"mScreen": 768,
-			"lScreen": 1024,
-			"xlScreen": 1200,
-			"xxlScreen": 1350,
-			"xxxlScreen": 1500,
-			"headerTools": 1800,
+			"xsScreen": 567,
+			"sScreen": 768,
+			"mScreen": 1024,
+			"lScreen": 1152,
+			"xlScreen": 1280,
+			"xxlScreen": 1440,
+			"xxxlScreen": 1680
 		}
 		return sizes[size];
 	}
