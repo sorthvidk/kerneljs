@@ -4,7 +4,7 @@
 	License: http://www.opensource.org/licenses/mit-license.php
 */
 var EventEmitter = require('eventemitter3'),
-	Log = require('../core/log');
+	Log = require('../src/log');
 
 
 var Generic = function() {

@@ -1,5 +1,5 @@
-var Generic = require('../core/generic'),
-	Log = require('../core/log');
+var Generic = require('../src/generic'),
+	Log = require('../src/log');
 
 
 /**

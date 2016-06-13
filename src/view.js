@@ -1,6 +1,6 @@
-var Generic = require('../core/generic'),
-	Utils = require('../core/utils'),
-	Log = require('../core/log');
+var Generic = require('../src/generic'),
+	Utils = require('../src/utils'),
+	Log = require('../src/log');
 
 
 /**
