@@ -4,16 +4,16 @@
 	License: http://www.opensource.org/licenses/mit-license.php
 */
 var EventEmitter = require('eventemitter3'),
-	Log = require('./log');
+	Log = require('../src/log');
 
 
 var Generic = function() {
-
+	
 };
 
 Generic.extend = function(_instance, _static) { // subclass
 	var extend = Generic.prototype.extend;
-
+	
 	// build the prototype
 	Generic._prototyping = true;
 	var proto = new this;
@@ -24,7 +24,7 @@ Generic.extend = function(_instance, _static) { // subclass
 	};
 
 	delete Generic._prototyping;
-
+	
 	// create the wrapper for the constructor function
 	//var constructor = proto.constructor.valueOf(); //-dean
 	var constructor = proto.constructor;
@@ -39,7 +39,7 @@ Generic.extend = function(_instance, _static) { // subclass
 			}
 		}
 	};
-
+	
 	// build the class interface
 	klass.ancestor = this;
 	klass.extend = this.extend;
@@ -57,8 +57,9 @@ Generic.extend = function(_instance, _static) { // subclass
 	return klass;
 };
 
-Generic.prototype = {
+Generic.prototype = {	
 	extend: function(source, value) {
+		//console.log("arguments.length",arguments.length)
 		if (arguments.length > 1) { // extending with a name/value pair
 			var ancestor = this[source];
 			if (ancestor && (typeof value == "function") && // overriding a method?
@@ -71,9 +72,9 @@ Generic.prototype = {
 				value = function() {
 					var previous = this.base || Generic.prototype.base;
 					this.base = ancestor;
-					var returnValue = method.apply(this, arguments);
+					//var returnValue = method.apply(this, arguments); //JPL: IE8 fails here
 					this.base = previous;
-					return returnValue;
+					//return returnValue; //JPL: IE8 fails here
 				};
 				// point to the underlying method
 				value.valueOf = function(type) {
@@ -117,8 +118,8 @@ Generic = Generic.extend({
 }, {
 	ancestor: Object,
 	version: "1.1",
-
-
+	
+	
 	forEach: function(object, block, context) {
 		for (var key in object) {
 			if (this.prototype[key] === undefined) {
@@ -126,7 +127,7 @@ Generic = Generic.extend({
 			}
 		}
 	},
-
+		
 	implement: function() {
 		for (var i = 0; i < arguments.length; i++) {
 			if (typeof arguments[i] == "function") {
@@ -139,7 +140,7 @@ Generic = Generic.extend({
 		}
 		return this;
 	},
-
+	
 	toString: function() {
 		return String(this.valueOf());
 	}

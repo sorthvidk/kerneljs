@@ -1,4 +1,4 @@
-var Kernel = require('../dist/kernel');
+var Kernel = require('../kernel');
 
 
 debugger;
