@@ -66,18 +66,15 @@ Generic.prototype = {
 				// the valueOf() comparison is to avoid circular references
 				(!ancestor.valueOf || ancestor.valueOf() != value.valueOf()) &&
 				/\bbase\b/.test(value)) {
-
-				//console.log("> override method "+value);
-
 				// get the underlying method
 				var method = value.valueOf();
 				// override
 				value = function() {
 					var previous = this.base || Generic.prototype.base;
 					this.base = ancestor;
-					//var returnValue = method.apply(this, arguments);
+					//var returnValue = method.apply(this, arguments); //JPL: IE8 fails here
 					this.base = previous;
-					//return returnValue;
+					//return returnValue; //JPL: IE8 fails here
 				};
 				// point to the underlying method
 				value.valueOf = function(type) {

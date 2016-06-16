@@ -61,11 +61,12 @@ var View = Generic.extend({
 			var eventSplit = prop.split(' ');
 			var eventName = eventSplit[0];
 			
-			var eventSelector = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
+			var target = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
 			
 			var eventHandler = this[this.events[prop]];
+			var elements = target instanceof NodeList ? target : Utils.find(this.el, target);
 
-			this.each(eventSelector,function(elem){
+			Utils.each(elements,function(elem){
 				this.on(elem, eventName, eventHandler.bind(this));
 			}.bind(this));
 		}
@@ -146,22 +147,6 @@ var View = Generic.extend({
 
 	toggleClass: function(className, test) {
 		Utils.toggleClass(this.el, className, test);
-	},
-
-	/**
-	 * A vanilla implementation of each
-	 **/
-	each:function(selector, fn) {
-		var elements = selector instanceof NodeList || selector instanceof Element ? selector : Utils.find(this.el, selector);
-		
-		if ( elements.length ){
-			for (var i = 0; i < elements.length; i++) {
-				fn(elements[i], i);
-			}
-		}
-		else {
-			fn(elements, i);
-		}
 	}
 });
 

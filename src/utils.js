@@ -99,6 +99,31 @@ var Utils = Generic.extend({
 	},
 
 
+	/**
+	 * A vanilla implementation of each
+	 **/
+	each:function(target, fn) {
+		var elements;
+
+		if ( target instanceof NodeList ) {
+			//all good
+			elements = target;
+		}
+		else if ( typeof target == "string" ) {
+			elements = this.find(target);
+		}
+		else if ( typeof target[0] == "string" ) {
+			elements = this.find( target[0] );
+		}
+		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
+			Log.er("Utils | each | still not a NodeList.");
+			return false;
+		}
+
+		for (var i = 0; i < elements.length; i++) {
+			fn(elements[i], i);
+		}
+	},
 
 	/**
 	 * Attaches an event listener
