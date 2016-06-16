@@ -10,7 +10,8 @@ module.exports = {
   output: {
 		path: './dist',
 		filename: '[name].js',
-		publicPath: "/dist/"
+		publicPath: "/dist/",
+		libraryTarget: "umd"
 	},
   module: {
     loaders: [
