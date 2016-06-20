@@ -2,6 +2,7 @@ var Generic = require('../src/generic'),
 	Log = require('../src/log');
 
 
+
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
@@ -104,19 +105,17 @@ var Utils = Generic.extend({
 	 **/
 	each:function(target, fn) {
 		var elements;
-
-		if ( target instanceof NodeList ) {
-			//all good
-			elements = target;
-		}
-		else if ( typeof target == "string" ) {
+		
+		if ( typeof target == "string" ) {
 			elements = this.find(target);
 		}
-		else if ( typeof target[0] == "string" ) {
-			elements = this.find( target[0] );
+		else if ( target.length || target instanceof NodeList ) {
+			elements = target;
+		}
+		else if ( target instanceof Element ) {			
+			elements = [target];
 		}
 		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
-			Log.er("Utils | each | still not a NodeList.");
 			return false;
 		}
 
