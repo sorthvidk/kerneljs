@@ -25,9 +25,6 @@ var Utils = Generic.extend({
 		
 	},
 	closestByClass: function(el, className) {
-		Log.db("el???",el)
-		Log.db("this???",this)
-		Log.db("className???",className)
 		return this.closest(el, function(_el){ return this.hasClass(_el, className); }.bind(this));
 	},
 	closestByTag: function(el, tagName) {
