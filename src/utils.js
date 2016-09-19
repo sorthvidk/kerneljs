@@ -64,6 +64,7 @@ var Utils = Generic.extend({
 	},
 
 	addClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			el.classList.add(className);
 		else
@@ -71,6 +72,7 @@ var Utils = Generic.extend({
 	},
 
 	removeClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			return el.classList.remove(className);
 		else
@@ -78,6 +80,7 @@ var Utils = Generic.extend({
 	},
 
 	toggleClass: function(el, className, test) {
+		if (className.length === 0) return false;
 		if (typeof test != "undefined") {
 			if ( test ) this.addClass(el, className);
 			else this.removeClass(el, className);
