@@ -19,25 +19,23 @@ var Utils = Generic.extend({
 		}
 		else {
 			result = arg0.querySelectorAll(arg1);
-		}
-		
-		return result;
-		
+		}		
+		return result;		
 	},
 	closestByClass: function(el, className) {
-		return this.closest(el, function(_el){ return this.hasClass(_el, className); }.bind(this));
+		return this.closest(el, function(_el){ return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null; 
+		});
 	},
 	closestByTag: function(el, tagName) {
-		return this.closest(el, function(_el){ return _el.tagName === tagName; }.bind(this));
+		return this.closest(el, function(_el){ return _el.tagName ? _el.tagName === tagName : null; });
 	},
 	closestByID: function(el, id) {
-		return this.closest(el, function(_el){ return _el.id === id; }.bind(this));
+		return this.closest(el, function(_el){ return _el.id ? _el.id === id : null; });
 	},
 	closest: function(el, fn) {
 		if ( !(el instanceof Element)) return false;
 		return el && (fn(el) ? el : this.closest(el.parentNode, fn));
 	},
-
 	append:function(el,child){
 		var elem = el;
 
@@ -57,6 +55,7 @@ var Utils = Generic.extend({
 	},
 
 	hasClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			return el.classList.contains(className);
 		else
