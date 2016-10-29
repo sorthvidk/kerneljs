@@ -60,15 +60,28 @@ var View = Generic.extend({
 		for (var prop in this.events) {
 			var eventSplit = prop.split(' ');
 			var eventName = eventSplit[0];
-			
+
+			// is the target specified with a selector, or is this.el implied?
 			var target = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
 			
 			var eventHandler = this[this.events[prop]];
-			var elements = target instanceof NodeList ? target : Utils.find(this.el, target);
 
-			Utils.each(elements,function(elem){
-				this.on(elem, eventName, eventHandler.bind(this));
-			}.bind(this));
+			// is the target already an element or a selector?  
+			var elements;
+			if ( typeof target == "string" ){
+				elements = Utils.find(this.el, target);
+			} 
+			else if ( target.length ) {
+				elements = Utils.find(this.el, target[0]);
+			}
+			else {
+				elements = [target];
+			}
+
+			var elementCount = elements.length;
+			for ( var i=0; i<elementCount; i++) {
+				this.on(elements[i], eventName, eventHandler.bind(this));
+			}
 		}
 	},
 

@@ -2,6 +2,7 @@ var Generic = require('../src/generic'),
 	Log = require('../src/log');
 
 
+
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
@@ -18,25 +19,23 @@ var Utils = Generic.extend({
 		}
 		else {
 			result = arg0.querySelectorAll(arg1);
-		}
-		
-		return result;
-		
+		}		
+		return result;		
 	},
 	closestByClass: function(el, className) {
-		return this.closest(el, function(_el){ return _el.className === className; }.bind(this));
+		return this.closest(el, function(_el){ return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null; 
+		});
 	},
 	closestByTag: function(el, tagName) {
-		return this.closest(el, function(_el){ return _el.tagName === tagName; }.bind(this));
+		return this.closest(el, function(_el){ return _el.tagName ? _el.tagName === tagName : null; });
 	},
 	closestByID: function(el, id) {
-		return this.closest(el, function(_el){ return _el.id === id; }.bind(this));
+		return this.closest(el, function(_el){ return _el.id ? _el.id === id : null; });
 	},
 	closest: function(el, fn) {
 		if ( !(el instanceof Element)) return false;
 		return el && (fn(el) ? el : this.closest(el.parentNode, fn));
 	},
-
 	append:function(el,child){
 		var elem = el;
 
@@ -56,6 +55,7 @@ var Utils = Generic.extend({
 	},
 
 	hasClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			return el.classList.contains(className);
 		else
@@ -63,6 +63,7 @@ var Utils = Generic.extend({
 	},
 
 	addClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			el.classList.add(className);
 		else
@@ -70,6 +71,7 @@ var Utils = Generic.extend({
 	},
 
 	removeClass: function(el, className) {
+		if (className.length === 0) return false;
 		if (el.classList)
 			return el.classList.remove(className);
 		else
@@ -77,6 +79,7 @@ var Utils = Generic.extend({
 	},
 
 	toggleClass: function(el, className, test) {
+		if (className.length === 0) return false;
 		if (typeof test != "undefined") {
 			if ( test ) this.addClass(el, className);
 			else this.removeClass(el, className);
@@ -104,19 +107,17 @@ var Utils = Generic.extend({
 	 **/
 	each:function(target, fn) {
 		var elements;
-
-		if ( target instanceof NodeList ) {
-			//all good
-			elements = target;
-		}
-		else if ( typeof target == "string" ) {
+		
+		if ( typeof target == "string" ) {
 			elements = this.find(target);
 		}
-		else if ( typeof target[0] == "string" ) {
-			elements = this.find( target[0] );
+		else if ( target.length || target instanceof NodeList ) {
+			elements = target;
+		}
+		else if ( target instanceof Element ) {			
+			elements = [target];
 		}
 		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
-			Log.er("Utils | each | still not a NodeList.");
 			return false;
 		}
 
