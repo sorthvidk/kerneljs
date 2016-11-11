@@ -1,9 +1,15 @@
-var Kernel =  {
+const Kernel =  {
 	View: require('./src/view'),
 	Utils: require('./src/utils'),
 	Log: require('./src/log')
 }
-module.exports = Kernel;
+exports.View = require('./src/view');
+exports.utils = require('./src/utils');
+exports.Log = require('./src/log');
+exports._ = require('underscore');
+
+
+
 
 // !function (root, factory){
 // 	'use strict';

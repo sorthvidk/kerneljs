@@ -11,7 +11,7 @@ var Generic = require('../src/generic'),
  */
 
 var View = Generic.extend({
-  	
+
   	viewName:'View',
   	className:'',
   	el:null,
@@ -27,17 +27,17 @@ var View = Generic.extend({
 	 */
 	constructor: function(settings) {
 		this.instanceId = Utils.getCuid();
-		this.settings = settings;
-		if ( settings.el ) {
+		this.settings = settings || {};
+		if ( this.settings.el ) {
 			this.el = settings.el;
 		}
-		else if ( settings.selector ) {
+		else if ( this.settings.selector ) {
 			this.el = Utils.find(settings.selector);
 		}
 		else {
 			var selector = this.className.length > 0 ? 'div'+'.'+this.className : 'div' ;
 			this.el = Utils.createEl(selector);
-			if ( settings.content ) {
+			if ( this.settings.content ) {
 				this.el.innerHTML = settings.content;
 			}
 		}
@@ -63,14 +63,14 @@ var View = Generic.extend({
 
 			// is the target specified with a selector, or is this.el implied?
 			var target = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
-			
+
 			var eventHandler = this[this.events[prop]];
 
-			// is the target already an element or a selector?  
+			// is the target already an element or a selector?
 			var elements;
 			if ( typeof target == "string" ){
 				elements = Utils.find(this.el, target);
-			} 
+			}
 			else if ( target.length ) {
 				elements = Utils.find(this.el, target[0]);
 			}
@@ -128,7 +128,7 @@ var View = Generic.extend({
 	},
 
 	append:function(elem) {
-		Utils.append(this.el, elem);		
+		Utils.append(this.el, elem);
 	},
 
 	/**
