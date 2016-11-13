@@ -1,12 +1,22 @@
-const Kernel =  {
-	View: require('./src/view'),
-	Utils: require('./src/utils'),
-	Log: require('./src/log')
+import View from './src/es6view';
+import Dom from './src/es6dom';
+import Utils from './src/es6utils';
+import Log from './src/log';
+
+const Kernel = {
+	View: View,
+	Dom: Dom,
+	Utils: Utils,
 }
-exports.View = require('./src/view');
-exports.utils = require('./src/utils');
-exports.Log = require('./src/log');
-exports._ = require('underscore');
+
+export default Kernel;
+
+
+
+//exports.View = require('./src/view');
+//exports.utils = require('./src/utils');
+//exports.Log = require('./src/log');
+//exports._ = require('underscore');
 
 
 

@@ -1,23 +1,11 @@
-//import { View } from '../dist/kernel';
+import View from '../src/es6view';
+//const { View, Dom } = Kernel;
+//import Log from '../dist/kernel';
 
-const Kernel = require('../dist/kernel');
+//const Kernel = require('../dist/kernel');
 
-const Utils = Kernel.utils;
-
-
-//debugger;
-let Box = Kernel.View.extend({
-	initialize: function(){
-		console.log("testddssssssssffs", this)
-	}
-})
-
-
-!(function(){
-	new Box();
-})()
-
-
+//const Utils = Kernel.utils;
+console.log(View);
 
 /**
 * View is the standard sorthvid content container class
@@ -25,45 +13,39 @@ let Box = Kernel.View.extend({
 * @param settings The instance property values parsed into the constructor
 * @param events A json object containing the events for the instance
 **/
-class View {
-	defaultProps() {
-		this.instanceId = Utils.getCuid();
-		this.className = '';
-	  	this.name = 'view class';
-	  	// el: null,
-	  	// settings: null,
-	  	// events: null,
-	  	// parent: null,
-	  	// visible: true,
-	  	// instanceId: true
-	}
+const defaults = {
+	el: '.box',
+	events: {
+		'click .btn': 'onClick',
+		'mouseenter': 'onMouseEnter'
+	},
+	displayName: 'Box-example',
 
-	constructor(settings, defaults) { //class constructor
-		this.defaultProps();
-		console.log(settings, defaults)
-
-	}
-
-	sayName() { //class method
-		console.log('Hi, I am a', this.name + '.');
-	}
 }
 
 class Boxes extends View {
+
 	constructor(settings) { // ES6 features Default Parameters
-		const defaults = {
-			className: 'test'
+		let defaults = {
+			el: '.box',
+			events: {
+				'click .btn': 'onClick',
+				'mouseenter': 'onMouseEnter'
+			},
+			displayName: 'Box-example'
 		}
+
 		super(defaults) //call the parent method with super
-		this.name = 'new box dd';
-		this.className = 'box class'
+		console.log(settings, this);
 
 	}
+	onMouseEnter(e) {
+		console.log(e);
+	}
 
-	static defaults() {
-		return {
-			className: 'test'
-		}
+	onClick(e) {
+		e.preventDefault();
+		console.log(e);
 	}
 
 	get area() { //calculated attribute getter
@@ -77,8 +59,8 @@ class Boxes extends View {
 
 let s = new Boxes(5);
 
-s.sayName(); // => Hi, I am a Square.
-console.log(s); // => 25
+// s.sayName(); // => Hi, I am a Square.
+// console.log(s); // => 25
 
 //console.log(new Square().area); // => 100
 
