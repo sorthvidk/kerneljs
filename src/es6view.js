@@ -45,7 +45,7 @@ class View {
 		this.delegateEvents();
 	}
 
-	delegateEvents() {
+		delegateEvents() {
 
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
@@ -69,7 +69,7 @@ class View {
 			}
 
 			elements.forEach((a)=>{
-				this.on(a, eventName, eventHandler);
+				this.on(a, eventName, eventHandler.bind(this));
 			});
 		}
 	}

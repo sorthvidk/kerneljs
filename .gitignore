@@ -1,6 +1,4 @@
 /node_modules
-/test
-/tests
 /prototype
 /styleguide
 .sass-cache
