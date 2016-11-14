@@ -6,7 +6,7 @@ var Generic = require('../src/generic'),
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
-var Utils = Generic.extend({
+var Utils = {
 
 	/*
 	 * DOM methods - common jQuery functions with vanilla JS
@@ -345,6 +345,6 @@ var Utils = Generic.extend({
 		}
 		return sizes[size];
 	}
-});
+};
 
-module.exports = new Utils();
+module.exports = Utils;
