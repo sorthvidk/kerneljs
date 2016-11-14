@@ -4,13 +4,13 @@ var WebpackDevServer = require("webpack-dev-server");
 
 module.exports = {
   entry: {
-	'kernel': './index.js'
-
-},
+  	'kernel': './index.js'
+  },
   output: {
 		path: './dist',
 		filename: '[name].js',
-		publicPath: "/dist/"
+		publicPath: "/dist/",
+    libraryTarget: 'commonjs2'
 	},
   module: {
     loaders: [
