@@ -351,7 +351,7 @@ var Utils = {
 			element.style.display = 'block';
 			setTimeout(function(){
 				this.addClass(element, 'is-active');
-			},50);
+			}.bind(this),50);
 		}
 		catch(error) {
 			Log.err("showElement, element="+element);
