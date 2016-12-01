@@ -344,6 +344,28 @@ var Utils = {
 			"xxxlScreen": 1680
 		}
 		return sizes[size];
+	},
+
+	showElement:function(element) {
+		try {
+			element.style.display = 'block';
+			setTimeout(function(){
+				this.addClass(element, 'is-active');
+			},50);
+		}
+		catch(error) {
+			Log.err("showElement, element="+element);
+		}
+	},
+	
+	hideElement:function(element) {
+		try {
+			element.style.display = 'none';
+			this.removeClass(element, 'is-active');
+			}
+		catch(error) {
+			Log.err("hideElement, element="+element);
+		}
 	}
 };
 
