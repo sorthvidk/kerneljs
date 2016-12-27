@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>KernelJS demopage</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>KernelJS demopage</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
 
-        <!-- Add your site or application content here -->
-        <div class="box">This is a box<a href="#" clasS="btn">btn</a></div>
-        <table class="table"><tr><td class="one">dd</td><td class="two">dd</td></tr></table>
-        <script src="/dist/test.js"></script>
-    </body>
+		<!-- Add your site or application content here -->
+		<div class="box" style="padding:10px;background:grey;margin:10px;">
+			<h3>This is box 1</h3>
+			<a href="#" class="button js--button-1">btn 1</a>
+			<a href="#" class="button js--button-2">btn 2</a>
+		</div>
+
+		<div class="box" style="padding:10px;background:grey;margin:10px;">This is box 2<a href="#" class="button js--button-1">btn</a></div>
+		
+
+		<article class="test-class-2" id="testId1">
+			<section class="test-class-2" id="testId2">
+				<aside class="test-class-3" id="testId3">
+					<table id="table"><tr><td class="one">dd</td><td class="two">dd</td></tr></table>
+				</aside>
+			</section>
+		</article>
+
+
+
+		<script src="/dist/test.js"></script>
+	</body>
 </html>

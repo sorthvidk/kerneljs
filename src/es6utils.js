@@ -1,98 +1,22 @@
+import DOM from './es6dom';
+
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
 const Utils = {
-	/*
-	 * DOM methods - common jQuery functions with vanilla JS
+	
+	/**
+	 * Creates all Views for a chosen Class
+	 * @param {String} selector - selector for which elements to associate with Views
+	 * @param {Class} viewClass - a reference to the class from which Views will be instantiated
 	 */
-
-	find: function(arg0, arg1){
-		var result;
-		if ( typeof arg1 == "undefined" ) {
-			result = document.querySelectorAll(arg0);
-		}
-		else {
-			result = arg0.querySelectorAll(arg1);
-		}
-		return result;
-	},
-	closestByClass: function(el, className) {
-		return this.closest(el, function(_el){ return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null;
+	viewFactory: function(selector, viewClass) {
+		var elements = DOM.find(selector);
+		var views = [];
+		[...elements].map((el) => {
+			views.push( new viewClass( {el:el} ) );
 		});
-	},
-	closestByTag: function(el, tagName) {
-		return this.closest(el, function(_el){ return _el.tagName ? _el.tagName === tagName : null; });
-	},
-	closestByID: function(el, id) {
-		return this.closest(el, function(_el){ return _el.id ? _el.id === id : null; });
-	},
-	closest: function(el, fn) {
-		if ( !(el instanceof Element)) return false;
-		return el && (fn(el) ? el : this.closest(el.parentNode, fn));
-	},
-	append:function(el,child){
-		var elem = el;
-
-		if ( typeof el == "string") {
-			elem = this.find(el);
-		}
-		if (elem.length) {
-			elem = elem[0];
-		}
-		elem.appendChild(child);
-	},
-
-	remove:function(el) {
-		var parent = el.parentNode;
-		try {parent.removeChild(el);}
-		catch (e){  }
-	},
-
-	hasClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			return el.classList.contains(className);
-		else
-			return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-	},
-
-	addClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			el.classList.add(className);
-		else
-			el.className += ' ' + className;
-	},
-
-	removeClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			return el.classList.remove(className);
-		else
-			return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-	},
-
-	toggleClass: function(el, className, test) {
-		if (className.length === 0) return false;
-		if (typeof test != "undefined") {
-			if ( test ) this.addClass(el, className);
-			else this.removeClass(el, className);
-		}
-		else {
-			if (el.classList) {
-				el.classList.toggle(className);
-			} else {
-				var classes = el.className.split(' ');
-				var existingIndex = classes.indexOf(className);
-
-				if (existingIndex >= 0)
-					classes.splice(existingIndex, 1);
-				else
-					classes.push(className);
-
-				el.className = classes.join(' ');
-			}
-		}
+		return views;
 	},
 
 
@@ -177,7 +101,7 @@ const Utils = {
 			for (var i = 0; i < sel.length; i++) {
 				if (elem) {
 					if (typeof sel[i] === "string") {
-						elem.appendChild(build(sel[i]));
+						elem.appendChild(this.buildEl(sel[i]));
 					} else if (typeof sel[i] === "object") {
 						elem.appendChild(sel[i]);
 					}
@@ -197,28 +121,50 @@ const Utils = {
 	buildEl: function(s) {
 		var selector = s.split(".");
 		var el = document.createElement(selector[0]);
-		var cl = selector[1] ? selector[1].split(" ") : 0;
+		var cl = selector.splice(1);
+		console.log("cl",cl)
+		console.log("el",el)
 		if (cl.length > 0) {
 			for (var i = 0; i < cl.length; i++) {
-				this.addClass(el, cl[i]);
+				DOM.addClass(el, cl[i]);
 			}
 		}
 		return el;
 	},
 
 	/**
-	 * Vanilla way of sniffing accordion content height
+	 * Vanilla way of sniffing element height
 	 * @param {Element} elem - the DOMelement in question
-	 * @param {String} className - the class to add, when the accordion is ready
 	 */
-	getAccordionHeight: function(elem, className) {
-		var height;
-		this.removeClass(elem, className);
-		this.addClass(elem, "is--calculation-height");
-		height = elem.getClientRects() ? elem.getClientRects()[0].height : elem.offsetHeight;
-		this.removeClass(elem, "is--calculation-height");
-		this.addClass(elem, className);
-		return height;
+	getHeight: function(el) {
+		var el_style      = window.getComputedStyle(el),
+			el_display    = el_style.display,
+			el_position   = el_style.position,
+			el_visibility = el_style.visibility,
+			el_max_height = el_style.maxHeight.replace('px', '').replace('%', ''),
+
+			wanted_height = 0;
+
+
+		// if its not hidden we just return normal height
+		if(el_display !== 'none' && el_max_height !== '0') {
+			return el.offsetHeight;
+		}
+
+		// the element is hidden so:
+		// making the el block so we can meassure its height but still be hidden
+		el.style.position   = 'absolute';
+		el.style.visibility = 'hidden';
+		el.style.display    = 'block';
+
+		wanted_height     = el.offsetHeight;
+
+		// reverting to the original values
+		el.style.display    = el_display;
+		el.style.position   = el_position;
+		el.style.visibility = el_visibility;
+
+		return wanted_height;
 	},
 
 

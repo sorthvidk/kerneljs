@@ -12,41 +12,29 @@ import DOM from './es6dom';
 //var props = { className = '', displayName = 'New View instance', el = null, events = null };
 
 
-
-
-
 class View {
-	constructor({
-		className = '',
-		el = null,
-		content = null,
-		events = null }) { //class constructor
-
+	constructor({el = null, className = null, content = null, events = null, displayName = null }) { //class constructor
+		
 		this.instanceId = Utils.getCuid();
 		this.events = events;
 
 
-		if ( el && typeof el == 'string' ) {
-			this.el = DOM.find(el)[0];
-		}
-		else if ( typeof el == 'object' ) {
-			this.el = el;
-
-		}
-		else {
-			let select = className.length > 0 ? 'div'+'.'+className : 'div' ;
-			this.el = Utils.createEl(select);
+		if ( typeof el == "string" ) {
+			this.el = Utils.createEl(el);
 			if ( content ) {
-				this.el.innerHTML = content;
+				this.el.innerHTML = content;				
 			}
 		}
-		//Object.assign(this.el, DOM);
+		else {
+			this.el = el;
+		}
 
+		this.eventListeners = [];
 		this.delegateEvents();
 	}
 
-		delegateEvents() {
-
+	delegateEvents() {
+		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
 			let eventName = eventSplit[0];
@@ -65,15 +53,23 @@ class View {
 				elements = DOM.find(this.el, target[0]);
 			}
 			else {
+				//wrapping this.el in array
 				elements = [target];
 			}
 
-			elements.forEach((a)=>{
-				this.on(a, eventName, eventHandler.bind(this));
+			elements.forEach((element)=>{
+				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
+				this.on(element, eventName, eventHandler.bind(this));
 			});
 		}
 	}
 
+	undelegateEvents() {
+		this.eventListeners.forEach((listener)=>{
+			this.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
+		});
+		return true;
+	}
 	/*
 	* Attaches an event listener
 	* @param {Element} elem - the associated DOMelement
@@ -99,8 +95,10 @@ class View {
 	* Sets the View's visible property to false
 	*/
 	remove() {
-		this.visible = false;
-		DOM.remove(this.el);
+		if ( this.undelegateEvents() ) {
+			this.visible = false;
+			DOM.remove(this.el);
+		}
 	}
 
 	/**
@@ -109,7 +107,8 @@ class View {
 	**/
 	render() {
 		if ( !this.visible ) {
-			this.parent.appendChild(this.el);
+
+			this.el.parent.appendChild(this.el);
 			this.visible = true;
 		}
 		return this;
@@ -123,19 +122,12 @@ class View {
 	 **/
   	find(selector) {
   		var result = DOM.find(this.el, selector);
-  		if ( result instanceof NodeList && result.length == 1) {
-			return result[0];
-		}
-		else {
-			return result;
-		}
+  		return result;
 	}
 
-	closestByClass(className) {
-		return DOM.closestByClass(this.el, className);
-	}
 	addClass(className) {
 		DOM.addClass(this.el, className);
+		return this;
 	}
 
 	hasClass(className) {
@@ -144,6 +136,7 @@ class View {
 
 	removeClass(className) {
 		DOM.removeClass(this.el, className);
+		return this;
 	}
 
 	toggleClass(className, test) {

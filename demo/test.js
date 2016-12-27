@@ -1,70 +1,80 @@
 import View from '../src/es6view';
+import DOM from '../src/es6dom';
+import Utils from '../src/es6utils';
 
-class Boxes extends View {
+class Box extends View {
 
-	constructor(settings) { // ES6 features Default Parameters
+	constructor(settings) {
 		let defaults = {
-			el: '.box',
+			el:settings.el,
 			events: {
-				'click .btn': 'onClick',
+				'click .js--button-1': 'onClick',
+				'click .js--button-2': 'onClick2',
 				'mouseenter': 'onMouseEnter'
 			},
+			className:'Box',
 			displayName: 'Box-example'
 		}
-		super(defaults) //call the parent method with super
-		console.log(this.displayName, this);
+		super(defaults);
+		var buttons = this.find('.button');
+		DOM.addClass(buttons, 'is-active');
 	}
 	onMouseEnter(e) {
-		console.log(e);
+		console.log('onMouseEnter',this.instanceId);
 	}
-
 	onClick(e) {
-		e.preventDefault();
-		console.log(e);
+		console.log('onClick',this.instanceId);
+	}
+	onClick2(e) {
+		console.log('onClick2',this.instanceId);
 	}
 }
+
 class Table extends View {
 
-	constructor(settings) { // ES6 features Default Parameters
+	constructor(settings) {
 		let defaults = {
-			el: '.table',
+			content: settings.content,
+			el: settings.el,
 			events: {
-				'click .one': 'onClick',
+				'click .js--button': 'onClick',
 				'mouseenter': 'onMouseEnter'
 			},
 			displayName: 'Table-example'
 		}
-		super(defaults) //call the parent method with super
-		console.log(this.displayName, this);
+		super(defaults);
+
 	}
 	onMouseEnter(e) {
 		console.log(e);
 	}
-
 	onClick(e) {
 		e.preventDefault();
-		console.log(e);
 		this.remove();
+	}
+	render() {
+		DOM.append( DOM.find('body'), this.el);
 	}
 }
 
-let s = new Boxes(5);
-let a = new Table(5);
 
-// s.sayName(); // => Hi, I am a Square.
-// console.log(s); // => 25
-
-//console.log(new Square().area); // => 100
+//TESTS
 
 
-/*
-view:
-	delegate events
+let boxes = Utils.viewFactory('.box', Box);
+let table1 = new Table({el: DOM.find('#table')[0] });
+let table2 = new Table({el: 'div.table-test.class2.class3', content:'<a class="button">TEST ME</a>'});
+table2.render();
 
 
+console.log(table1.hasClass('table'));
+console.log(table1.hasClass('abe'));
+console.log(table1.addClass('abe').hasClass('abe'));
+console.log(table1.removeClass('abe').hasClass('abe'));
 
-
-*/
+var section = DOM.closest(table1,'section');
+console.log("section", section);
+DOM.addClass(section, 'extra-class');
 
 
 
