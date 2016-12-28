@@ -1,6 +1,7 @@
 import Log from './log';
 import Utils from './utils';
 import DOM from './dom';
+import Emmet from './emmet';
 
 /**
  * View is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
@@ -10,25 +11,26 @@ import DOM from './dom';
  * @param {String} displayName A huma readable name for the View
  */
 class View {
-	constructor({el = null, content = null, events = null, displayName = 'View' }) { //class constructor
-		
+	constructor({el = null, content = null, events = null, displayName = 'View', templ = null, data = null, mount = null }) { //class constructor
+
 		this.instanceId = Utils.getCuid();
 		this.events = events;
+		this.data = data;
+		this.mountPoint = mount;
 
 		if ( typeof el == "string" ) {
-			this.el = Utils.createEl(el);
-			if ( content ) {
-				this.el.innerHTML = content;
-			}
+			this.el = Emmet(el);
 		}
 		else {
 			this.el = el;
 		}
-
 		this.eventListeners = [];
 		this.delegateEvents();
-
+		this.update();
 		Log.fn(displayName+' ' + this.instanceId + ' created');
+		if(this.mountPoint) {
+			this.render();
+		}
 	}
 
 	delegateEvents() {
@@ -62,9 +64,23 @@ class View {
 	}
 
 	/*
+	* A "public" function, update all data-tmpl data attributes
+	*/
+	update() {
+		if(!this.data) return;
+		Object.keys(this.data).forEach((item)=>{
+			let el = DOM.find(this.el, '[data-text='+ item +']')[0];
+			if(el && this.data[item]) {
+				el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
+			}
+		});
+	}
+
+
+	/*
 	* A "private" function, which removes all event listeners
 	*/
-	undelegateEvents() {
+	static undelegateEvents() {
 		this.eventListeners.forEach((listener)=>{
 			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
 		});
@@ -87,9 +103,8 @@ class View {
 	* Sets the View's visible property to true
 	**/
 	render() {
-		if ( !this.visible ) {
-
-			this.el.parent.appendChild(this.el);
+		if ( !this.visible && this.mountPoint) {
+			DOM.append( DOM.find(this.mountPoint), this.el);
 			this.visible = true;
 		}
 		return this;

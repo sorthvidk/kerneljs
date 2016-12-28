@@ -32,7 +32,7 @@ Math.easeOutExpo = function (t, b, c, d) {
  * Utils is a collection of sorthvid auxilliary methods
  */
 const Utils = {
-	
+
 	/**
 	 * Creates all Views for a chosen Class
 	 * @param {String} selector - selector for which elements to associate with Views
@@ -125,45 +125,6 @@ const Utils = {
 		);
 	},
 
-	/*
-	 * single element: createEl("div.class")
-	 * multiple elements: createEl(["div.class", "div.class"])
-	 */
-
-	//TODO: implement emmet syntax creation, div.test>div.test2+ul.test3>li*5
-	createEl: function(sel) {
-		var elem;
-		if (typeof sel === "object") {
-			for (var i = 0; i < sel.length; i++) {
-				if (elem) {
-					if (typeof sel[i] === "string") {
-						elem.appendChild(this.buildEl(sel[i]));
-					} else if (typeof sel[i] === "object") {
-						elem.appendChild(sel[i]);
-					}
-				} else {
-					elem = this.buildEl(sel[i]);
-				}
-			}
-		} else {
-			elem = this.buildEl(sel);
-		}
-
-		return elem;
-	},
-
-	buildEl: function(s) {
-		var selector = s.split(".");
-		var el = document.createElement(selector[0]);
-		var cl = selector.splice(1);
-		if (cl.length > 0) {
-			for (var i = 0; i < cl.length; i++) {
-				DOM.addClass(el, cl[i]);
-			}
-		}
-		return el;
-	},
-
 	/**
 	 * Vanilla way of sniffing element height
 	 * @param {Element} elem - the DOMelement in question
@@ -242,7 +203,7 @@ const Utils = {
 			currentTime = 0,
 			increment = 20,
 			duration = (typeof(scrollDuration) === 'undefined') ? 500 : scrollDuration;
-		
+
 		var animateScroll = function() {
 			// increment the time
 			currentTime += increment;
@@ -262,7 +223,7 @@ const Utils = {
 
 	cumulativeOffset: function(el) {
 		var elem = el instanceof View ? el.el : el;
-		
+
 		var top = 0,
 			left = 0;
 
