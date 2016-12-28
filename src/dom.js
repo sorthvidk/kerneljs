@@ -1,6 +1,6 @@
-import View from './es6view';
-import Utils from './es6utils';
-
+import Log from './log';
+import View from './view';
+import Utils from './utils';
 
 const DOM = {
 
