@@ -57,20 +57,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
+	exports.Utils = exports.DOM = exports.View = exports.Log = undefined;
 	
-	var _es6view = __webpack_require__(1);
+	var _view = __webpack_require__(1);
 	
-	var _es6view2 = _interopRequireDefault(_es6view);
+	var _view2 = _interopRequireDefault(_view);
 	
-	var _es6dom = __webpack_require__(4);
+	var _dom = __webpack_require__(4);
 	
-	var _es6dom2 = _interopRequireDefault(_es6dom);
+	var _dom2 = _interopRequireDefault(_dom);
 	
-	var _es6utils = __webpack_require__(3);
+	var _utils = __webpack_require__(3);
 	
-	var _es6utils2 = _interopRequireDefault(_es6utils);
+	var _utils2 = _interopRequireDefault(_utils);
 	
 	var _log = __webpack_require__(2);
 	
@@ -78,36 +79,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Kernel = {
-		View: _es6view2.default,
-		Dom: _es6dom2.default,
-		Utils: _es6utils2.default
-	};
-	
-	exports.default = Kernel;
-	
-	//exports.View = require('./src/view');
-	//exports.utils = require('./src/utils');
-	//exports.Log = require('./src/log');
-	//exports._ = require('underscore');
-	
-	
-	// !function (root, factory){
-	// 	'use strict';
-	// 	if (typeof exports === 'object') {
-	// 		// CommonJS module
-	// 		module.exports = factory;
-	// 	} else if (typeof define === 'function' && define.amd) {
-	// 		// AMD. Register as an anonymous module.
-	// 		define(function ()
-	// 		{
-	// 			return factory;
-	// 		});
-	// 	}
-	// }(window, {
-	// 	View: View,
-	// 	Utils: Utils
-	// });
+	exports.Log = _log2.default;
+	exports.View = _view2.default;
+	exports.DOM = _dom2.default;
+	exports.Utils = _utils2.default;
 
 /***/ },
 /* 1 */
@@ -119,74 +94,71 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _log = __webpack_require__(2);
 	
 	var _log2 = _interopRequireDefault(_log);
 	
-	var _es6utils = __webpack_require__(3);
+	var _utils = __webpack_require__(3);
 	
-	var _es6utils2 = _interopRequireDefault(_es6utils);
+	var _utils2 = _interopRequireDefault(_utils);
 	
-	var _es6dom = __webpack_require__(4);
+	var _dom = __webpack_require__(4);
 	
-	var _es6dom2 = _interopRequireDefault(_es6dom);
+	var _dom2 = _interopRequireDefault(_dom);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	/**
-	 * View is the standard sorthvid content container class
-	 * @param el The associated DOMelement
-	 * @param settings The instance property values parsed into the constructor
-	 * @param events A json object containing the events for the instance
+	 * View is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
+	 * @param {Element} el The associated DOMelement OR a string shorthand for generating an element
+	 * @param {String} content Optional string HTML content to be injected into a generated element
+	 * @param {Object} events A json object containing the events for the instance
+	 * @param {String} displayName A huma readable name for the View
 	 */
-	
-	//var props = { className = '', displayName = 'New View instance', el = null, events = null };
-	
 	
 	var View = function () {
 		function View(_ref) {
-			var _ref$className = _ref.className,
-			    className = _ref$className === undefined ? '' : _ref$className,
-			    _ref$el = _ref.el,
-			    el = _ref$el === undefined ? null : _ref$el,
-			    _ref$content = _ref.content,
-			    content = _ref$content === undefined ? null : _ref$content,
-			    _ref$events = _ref.events,
-			    events = _ref$events === undefined ? null : _ref$events;
+			var _ref$el = _ref.el;
+			var el = _ref$el === undefined ? null : _ref$el;
+			var _ref$content = _ref.content;
+			var content = _ref$content === undefined ? null : _ref$content;
+			var _ref$events = _ref.events;
+			var events = _ref$events === undefined ? null : _ref$events;
+			var _ref$displayName = _ref.displayName;
+			var displayName = _ref$displayName === undefined ? 'View' : _ref$displayName;
 	
 			_classCallCheck(this, View);
 	
 			//class constructor
 	
-			this.instanceId = _es6utils2.default.getCuid();
+			this.instanceId = _utils2.default.getCuid();
 			this.events = events;
 	
-			if (el && typeof el == 'string') {
-				this.el = _es6dom2.default.find(el)[0];
-			} else if ((typeof el === 'undefined' ? 'undefined' : _typeof(el)) == 'object') {
-				this.el = el;
-			} else {
-				var select = className.length > 0 ? 'div' + '.' + className : 'div';
-				this.el = _es6utils2.default.createEl(select);
+			if (typeof el == "string") {
+				this.el = _utils2.default.createEl(el);
 				if (content) {
 					this.el.innerHTML = content;
 				}
+			} else {
+				this.el = el;
 			}
-			//Object.assign(this.el, DOM);
 	
+			this.eventListeners = [];
 			this.delegateEvents();
+	
+			_log2.default.fn(displayName + ' ' + this.instanceId + ' created');
 		}
 	
 		_createClass(View, [{
 			key: 'delegateEvents',
 			value: function delegateEvents() {
 				var _this = this;
+	
+				if (this.eventListeners.length > 0) throw new Error("Event listeners have already been delegated!");
 	
 				var _loop = function _loop(prop) {
 					var eventSplit = prop.split(' ');
@@ -200,15 +172,16 @@ return /******/ (function(modules) { // webpackBootstrap
 					// is the target already an element or a selector?
 					var elements = void 0;
 					if (typeof target == "string") {
-						elements = _es6dom2.default.find(_this.el, target);
+						elements = _dom2.default.find(_this.el, target);
 					} else if (target.length && target != _this.el) {
-						elements = _es6dom2.default.find(_this.el, target[0]);
+						elements = _dom2.default.find(_this.el, target[0]);
 					} else {
+						//wrapping this.el in array
 						elements = [target];
 					}
-	
-					elements.forEach(function (a) {
-						_this.on(a, eventName, eventHandler.bind(_this));
+					elements.forEach(function (element) {
+						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
+						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});
 				};
 	
@@ -218,29 +191,18 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 	
 			/*
-	  * Attaches an event listener
-	  * @param {Element} elem - the associated DOMelement
-	  * @param {String} eventName - the event string
-	  * @param {Function} eventHandler - the handler function
+	  * A "private" function, which removes all event listeners
 	  */
 	
 		}, {
-			key: 'on',
-			value: function on(elem, eventName, eventHandler) {
-				_es6utils2.default.on(elem, eventName, eventHandler);
-			}
+			key: 'undelegateEvents',
+			value: function undelegateEvents() {
+				var _this2 = this;
 	
-			/*
-	  * Removes an event listener
-	  * @param {Element} elem - the associated DOMelement
-	  * @param {String} eventName - the event string
-	  * @param {Function} eventHandler - the handler function
-	  */
-	
-		}, {
-			key: 'off',
-			value: function off(elem, eventName, eventHandler) {
-				_es6utils2.default.off(elem, eventName, eventHandler);
+				this.eventListeners.forEach(function (listener) {
+					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this2));
+				});
+				return true;
 			}
 	
 			/*
@@ -251,8 +213,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'remove',
 			value: function remove() {
-				this.visible = false;
-				_es6dom2.default.remove(this.el);
+				if (this.undelegateEvents()) {
+					this.visible = false;
+					_dom2.default.remove(this.el);
+				}
 			}
 	
 			/**
@@ -264,7 +228,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			key: 'render',
 			value: function render() {
 				if (!this.visible) {
-					this.parent.appendChild(this.el);
+	
+					this.el.parent.appendChild(this.el);
 					this.visible = true;
 				}
 				return this;
@@ -272,47 +237,40 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'append',
 			value: function append(elem) {
-				_es6dom2.default.append(this.el, elem);
+				_dom2.default.append(this.el, elem);
 			}
 	
 			/**
-	   * Wrappers for Utils DOM manipulation methods always using this.el as the origin
+	   * Wrappers for DOM manipulation methods always using this.el as the origin
 	   **/
 	
 		}, {
 			key: 'find',
 			value: function find(selector) {
-				var result = _es6dom2.default.find(this.el, selector);
-				if (result instanceof NodeList && result.length == 1) {
-					return result[0];
-				} else {
-					return result;
-				}
-			}
-		}, {
-			key: 'closestByClass',
-			value: function closestByClass(className) {
-				return _es6dom2.default.closestByClass(this.el, className);
+				var result = _dom2.default.find(this.el, selector);
+				return result;
 			}
 		}, {
 			key: 'addClass',
 			value: function addClass(className) {
-				_es6dom2.default.addClass(this.el, className);
+				_dom2.default.addClass(this.el, className);
+				return this;
 			}
 		}, {
 			key: 'hasClass',
 			value: function hasClass(className) {
-				return _es6dom2.default.hasClass(this.el, className);
+				return _dom2.default.hasClass(this.el, className);
 			}
 		}, {
 			key: 'removeClass',
 			value: function removeClass(className) {
-				_es6dom2.default.removeClass(this.el, className);
+				_dom2.default.removeClass(this.el, className);
+				return this;
 			}
 		}, {
 			key: 'toggleClass',
 			value: function toggleClass(className, test) {
-				_es6dom2.default.toggleClass(this.el, className, test);
+				_dom2.default.toggleClass(this.el, className, test);
 			}
 		}]);
 	
@@ -325,46 +283,41 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
-	var _log,
-	    type = {
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var type = {
 		disabled: "disabled",
 		debug: "debugging",
 		func: "function",
 		data: "raw data",
 		error: "!ERROR!"
 	},
-	    _db,
-	    _fn,
-	    _dt,
-	    _er;
-	
-	var allowedTypes = [type.debug, type.func, type.data, type.error];
+	    allowedTypes = [type.debug, type.func, type.data, type.error];
 	
 	/**
 	 * Logging wrapper for debugging
 	 * @param {args} - A list of parameters, where the first parameter can be a type as specified in the "type" object 
 	 */
 	
-	_log = function (undefined) {
-		var Log = Error;
+	var Log = {
 	
-		Log.prototype.write = function (args) {
+		write: function write() {
 			if (window.nolog) return false;
 	
 			var typeFound = false;
+	
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
 			for (var i = 0; i < allowedTypes.length; i++) {
 				if (allowedTypes[i] === args[0]) typeFound = true;
 			}
 	
 			if (typeFound) args[0] = "[" + args[0] + "] || ";
-	
-			var suffix = {
-				'@': this.lineNumber ? this.fileName + ':' + this.lineNumber + ':1' : extractLineNumberFromStack(this.stack)
-			};
-	
-			args = args.concat([suffix]);
 	
 			if (console) {
 				if (console.log) {
@@ -375,145 +328,119 @@ return /******/ (function(modules) { // webpackBootstrap
 					} // nicer display in some browsers
 				}
 			}
-		};
+		},
 	
-		var extractLineNumberFromStack = function extractLineNumberFromStack(stack) {
-			if (!stack || stack == '') {
-				return false;
-			}
-			var line = stack.split('\n')[2];
-			if (!line) return false;
-			if (!line.indexOf) return false;
-			line = line.indexOf(' (') >= 0 ? line.split(' (')[1].substring(0, line.length - 1) : line.split('at ')[1];
-			return line;
-		};
-	
-		return function (params) {
-			Log().write(Array.prototype.slice.call(arguments, 0)); // turn into proper array
-		};
-	}();
-	
-	/**
-	 * Log is the standard sorthvid log wrapper. It exposes four methods:
+		/*
+	 * Auxilliary functions for easy access
 	 * db - "debug", used for signifying, that the logged text is a general debugging statement
 	 * dt - "data", used for signifying, that the logged text is raw data
 	 * fn - "function", used for signifying, that the text is logged when a function is invoked
-	 * log - the full function where type can be specified manually or left out
 	 */
+		db: function db() {
+			for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+				args[_key2] = arguments[_key2];
+			}
 	
-	_db = function _db(args) {
-		_log(type.debug, Array.prototype.slice.call(arguments, 0));
-	};
-	_dt = function _dt(args) {
-		_log(type.data, Array.prototype.slice.call(arguments, 0));
-	};
-	_fn = function _fn(args) {
-		_log(type.func, Array.prototype.slice.call(arguments, 0));
-	};
-	_er = function _er(args) {
-		_log(type.error, Array.prototype.slice.call(arguments, 0));
+			this.write(type.debug, args);
+		},
+		dt: function dt() {
+			for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+				args[_key3] = arguments[_key3];
+			}
+	
+			this.write(type.data, args);
+		},
+		fn: function fn() {
+			for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+				args[_key4] = arguments[_key4];
+			}
+	
+			this.write(type.func, args);
+		},
+		er: function er() {
+			for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+				args[_key5] = arguments[_key5];
+			}
+	
+			this.write(type.error, args);
+		}
+	
 	};
 	
-	module.exports = { db: _db, dt: _dt, fn: _fn, er: _er, log: _log };
+	exports.default = Log;
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _log = __webpack_require__(2);
+	
+	var _log2 = _interopRequireDefault(_log);
+	
+	var _dom = __webpack_require__(4);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	var _view = __webpack_require__(1);
+	
+	var _view2 = _interopRequireDefault(_view);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	Math.easeInOutQuad = function (t, b, c, d) {
+		t /= d / 2;
+		if (t < 1) {
+			return c / 2 * t * t + b;
+		}
+		t--;
+		return -c / 2 * (t * (t - 2) - 1) + b;
+	};
+	
+	Math.easeInCubic = function (t, b, c, d) {
+		var tc = (t /= d) * t * t;
+		return b + c * tc;
+	};
+	
+	Math.inOutQuintic = function (t, b, c, d) {
+		var ts = (t /= d) * t,
+		    tc = ts * t;
+		return b + c * (6 * tc * ts + -15 * ts * ts + 10 * tc);
+	};
+	
+	Math.easeOutExpo = function (t, b, c, d) {
+		return c * (-Math.pow(2, -10 * t / d) + 1) + b;
+	};
 	
 	/**
 	 * Utils is a collection of sorthvid auxilliary methods
 	 */
 	var Utils = {
-		/*
-	  * DOM methods - common jQuery functions with vanilla JS
+	
+		/**
+	  * Creates all Views for a chosen Class
+	  * @param {String} selector - selector for which elements to associate with Views
+	  * @param {Class} viewClass - a reference to the class from which Views will be instantiated
 	  */
-	
-		find: function find(arg0, arg1) {
-			var result;
-			if (typeof arg1 == "undefined") {
-				result = document.querySelectorAll(arg0);
-			} else {
-				result = arg0.querySelectorAll(arg1);
-			}
-			return result;
-		},
-		closestByClass: function closestByClass(el, className) {
-			return this.closest(el, function (_el) {
-				return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null;
+		viewFactory: function viewFactory(selector, viewClass, settings) {
+			var elements = _dom2.default.find(selector);
+			var views = [];
+			[].concat(_toConsumableArray(elements)).map(function (el) {
+				var defaults = { el: el };
+				Object.assign(defaults, settings);
+				_log2.default.db("defaults", defaults);
+				views.push(new viewClass(defaults));
 			});
-		},
-		closestByTag: function closestByTag(el, tagName) {
-			return this.closest(el, function (_el) {
-				return _el.tagName ? _el.tagName === tagName : null;
-			});
-		},
-		closestByID: function closestByID(el, id) {
-			return this.closest(el, function (_el) {
-				return _el.id ? _el.id === id : null;
-			});
-		},
-		closest: function closest(el, fn) {
-			if (!(el instanceof Element)) return false;
-			return el && (fn(el) ? el : this.closest(el.parentNode, fn));
-		},
-		append: function append(el, child) {
-			var elem = el;
-	
-			if (typeof el == "string") {
-				elem = this.find(el);
-			}
-			if (elem.length) {
-				elem = elem[0];
-			}
-			elem.appendChild(child);
-		},
-	
-		remove: function remove(el) {
-			var parent = el.parentNode;
-			try {
-				parent.removeChild(el);
-			} catch (e) {}
-		},
-	
-		hasClass: function hasClass(el, className) {
-			if (className.length === 0) return false;
-			if (el.classList) return el.classList.contains(className);else return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-		},
-	
-		addClass: function addClass(el, className) {
-			if (className.length === 0) return false;
-			if (el.classList) el.classList.add(className);else el.className += ' ' + className;
-		},
-	
-		removeClass: function removeClass(el, className) {
-			if (className.length === 0) return false;
-			if (el.classList) return el.classList.remove(className);else return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-		},
-	
-		toggleClass: function toggleClass(el, className, test) {
-			if (className.length === 0) return false;
-			if (typeof test != "undefined") {
-				if (test) this.addClass(el, className);else this.removeClass(el, className);
-			} else {
-				if (el.classList) {
-					el.classList.toggle(className);
-				} else {
-					var classes = el.className.split(' ');
-					var existingIndex = classes.indexOf(className);
-	
-					if (existingIndex >= 0) classes.splice(existingIndex, 1);else classes.push(className);
-	
-					el.className = classes.join(' ');
-				}
-			}
+			return views;
 		},
 	
 		/**
@@ -544,7 +471,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * @param {String} eventName - the event string
 	  * @param {Function} eventHandler - the handler function
 	  */
-		on: function on(elem, eventName, eventHandler) {
+		on: function on(el, eventName, eventHandler) {
+			var elem = el instanceof _view2.default ? el.el : el;
 			if (elem.addEventListener) {
 				elem.addEventListener(eventName, eventHandler);
 			} else {
@@ -560,7 +488,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * @param {String} eventName - the event string
 	  * @param {Function} eventHandler - the handler function
 	  */
-		off: function off(elem, eventName, eventHandler) {
+		off: function off(el, eventName, eventHandler) {
+			var elem = el instanceof _view2.default ? el.el : el;
 			if (elem.removeEventListener) elem.removeEventListener(eventName, eventHandler);else elem.detachEvent('on' + eventName, eventHandler);
 		},
 	
@@ -569,10 +498,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * @param {Element} el - the DOMelement in question
 	  */
 		isElementInViewport: function isElementInViewport(el) {
-			if (!el) {
+			var elem = el instanceof _view2.default ? el.el : el;
+			if (!elem) {
 				return;
 			}
-			var rect = el.getBoundingClientRect();
+			var rect = elem.getBoundingClientRect();
 			return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
 			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
 			;
@@ -582,13 +512,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * single element: createEl("div.class")
 	  * multiple elements: createEl(["div.class", "div.class"])
 	  */
+	
+		//TODO: implement emmet syntax creation, div.test>div.test2+ul.test3>li*5
 		createEl: function createEl(sel) {
 			var elem;
-			if ((typeof sel === "undefined" ? "undefined" : _typeof(sel)) === "object") {
+			if ((typeof sel === 'undefined' ? 'undefined' : _typeof(sel)) === "object") {
 				for (var i = 0; i < sel.length; i++) {
 					if (elem) {
 						if (typeof sel[i] === "string") {
-							elem.appendChild(build(sel[i]));
+							elem.appendChild(this.buildEl(sel[i]));
 						} else if (_typeof(sel[i]) === "object") {
 							elem.appendChild(sel[i]);
 						}
@@ -596,7 +528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						elem = this.buildEl(sel[i]);
 					}
 				}
-			} else if ((typeof sel === "undefined" ? "undefined" : _typeof(sel)) === "object") {} else {
+			} else {
 				elem = this.buildEl(sel);
 			}
 	
@@ -606,28 +538,50 @@ return /******/ (function(modules) { // webpackBootstrap
 		buildEl: function buildEl(s) {
 			var selector = s.split(".");
 			var el = document.createElement(selector[0]);
-			var cl = selector[1] ? selector[1].split(" ") : 0;
+			var cl = selector.splice(1);
 			if (cl.length > 0) {
 				for (var i = 0; i < cl.length; i++) {
-					this.addClass(el, cl[i]);
+					_dom2.default.addClass(el, cl[i]);
 				}
 			}
 			return el;
 		},
 	
 		/**
-	  * Vanilla way of sniffing accordion content height
+	  * Vanilla way of sniffing element height
 	  * @param {Element} elem - the DOMelement in question
-	  * @param {String} className - the class to add, when the accordion is ready
 	  */
-		getAccordionHeight: function getAccordionHeight(elem, className) {
-			var height;
-			this.removeClass(elem, className);
-			this.addClass(elem, "is--calculation-height");
-			height = elem.getClientRects() ? elem.getClientRects()[0].height : elem.offsetHeight;
-			this.removeClass(elem, "is--calculation-height");
-			this.addClass(elem, className);
-			return height;
+		getHeight: function getHeight(el) {
+			var elem = el instanceof _view2.default ? el.el : el;
+	
+			var style = window.getComputedStyle(elem),
+			    savedProps = {
+				display: style.display,
+				position: style.position,
+				visibility: style.visibility,
+				maxHeight: style.maxHeight.replace('px', '').replace('%', '')
+			},
+			    wantedHeight = 0;
+	
+			// if its not hidden we just return normal height
+			if (savedProps.display !== 'none' && savedProps.maxHeight !== '0') {
+				return elem.offsetHeight;
+			}
+	
+			// the element is hidden so:
+			// making the el block so we can meassure its height but still be hidden
+			elem.style.position = 'absolute';
+			elem.style.visibility = 'hidden';
+			elem.style.display = 'block';
+	
+			wantedHeight = elem.offsetHeight;
+	
+			// reverting to the original values
+			elem.style.display = savedProps.display;
+			elem.style.position = savedProps.position;
+			elem.style.visibility = savedProps.visibility;
+	
+			return wantedHeight;
 		},
 	
 		/**
@@ -648,29 +602,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * @param {Element} elem - the DOMelement to scroll to
 	  * @param {Number} scrollDuration - duration of the animation
 	  */
-		scrollTo: function scrollTo(elem, scrollDuration) {
-			var offset = elem.getClientRects()[0],
-			    scrollStep = offset.top > window.scrollY ? -window.scrollY / (scrollDuration / 15) : window.scrollY / (scrollDuration / 15),
-			    scrollInterval = setInterval(function () {
-				if (elem.getClientRects()[0].top > window.innerHeight / 2) {
-					window.scrollBy(0, scrollStep);
-				} else {
-					clearInterval(scrollInterval);
+		scrollTo: function scrollTo(el, scrollDuration) {
+			var elem = el instanceof _view2.default ? el.el : el;
+			// because it's so fucking difficult to detect the scrolling element, just move them all
+			function move(amount) {
+				document.documentElement.scrollTop = amount;
+				document.body.parentNode.scrollTop = amount;
+				document.body.scrollTop = amount;
+			}
+			function position() {
+				return document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop;
+			}
+	
+			var requestAnimFrame = function () {
+				return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+					window.setTimeout(callback, 1000 / 60);
+				};
+			}();
+	
+			var start = position(),
+			    change = elem.getClientRects()[0].top - start,
+			    currentTime = 0,
+			    increment = 20,
+			    duration = typeof scrollDuration === 'undefined' ? 500 : scrollDuration;
+	
+			var animateScroll = function () {
+				// increment the time
+				currentTime += increment;
+				// find the value with the quadratic in-out easing function
+				var val = Math.easeOutExpo(currentTime, start, change, duration);
+				// move the document.body
+				move(val);
+				// do the animation unless its over
+				_log2.default.db(currentTime, duration);
+				if (currentTime < duration) {
+					requestAnimFrame(animateScroll);
 				}
-			}, 15);
+			}.bind(this);
+	
+			animateScroll();
 		},
 	
-		cumulativeOffset: function cumulativeOffset(element) {
-			if (element instanceof jQuery) {
-				element = element[0];
-			}
+		cumulativeOffset: function cumulativeOffset(el) {
+			var elem = el instanceof _view2.default ? el.el : el;
+	
 			var top = 0,
 			    left = 0;
+	
 			do {
-				top += element.offsetTop || 0;
-				left += element.offsetLeft || 0;
-				element = element.offsetParent;
-			} while (element);
+				top += elem.offsetTop || 0;
+				left += elem.offsetLeft || 0;
+				elem = elem.offsetParent;
+			} while (elem);
 	
 			return {
 				top: top,
@@ -693,14 +676,22 @@ return /******/ (function(modules) { // webpackBootstrap
 					return unescape(document.cookie.substring(start, end));
 				}
 			},
-			set: function set(cookieName, expireDays, cookieValue, domain, secure) {
+	
+			set: function set(_ref) {
+				var _ref$cookieName = _ref.cookieName;
+				var cookieName = _ref$cookieName === undefined ? null : _ref$cookieName;
+				var _ref$cookieValue = _ref.cookieValue;
+				var cookieValue = _ref$cookieValue === undefined ? null : _ref$cookieValue;
+				var _ref$expireDays = _ref.expireDays;
+				var expireDays = _ref$expireDays === undefined ? 30 : _ref$expireDays;
+	
 				var expireDate = new Date();
 				cookieValue = cookieValue || 1;
-				domain = domain || settings.domain;
 				expireDate.setDate(expireDate.getDate() + expireDays);
 				var cookieValue = escape(cookieValue) + (expireDays == null ? "" : "; path=/; expires=" + expireDate.toUTCString());
 				document.cookie = cookieName + "=" + cookieValue;
 			},
+	
 			setMinutes: function setMinutes(cookieName, expireMinutes, cookieValue, domain, secure) {
 				var expireDate = new Date();
 				cookieValue = cookieValue || 1;
@@ -747,21 +738,56 @@ return /******/ (function(modules) { // webpackBootstrap
 			};
 			return sizes[size];
 		}
+	
 	};
 	
 	exports.default = Utils;
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	
+	var _log = __webpack_require__(2);
+	
+	var _log2 = _interopRequireDefault(_log);
+	
+	var _view = __webpack_require__(1);
+	
+	var _view2 = _interopRequireDefault(_view);
+	
+	var _utils = __webpack_require__(3);
+	
+	var _utils2 = _interopRequireDefault(_utils);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var DOM = {
 	
+		elementProxy: function elementProxy(el) {
+			if (el instanceof HTMLElement || !el.length) {
+				return el;
+			} else if (el instanceof NodeList) {
+				return el[0];
+			} else {
+				throw new Error("Element neither HTMLElement nor NodeList. el: " + el);
+			}
+		},
+	
+		listProxy: function listProxy(el) {
+			if (el instanceof NodeList) {
+				return el;
+			} else if (el instanceof HTMLElement || !el.length) {
+				return [el];
+			} else {
+				throw new Error("Element neither HTMLElement nor NodeList. el: " + el);
+			}
+		},
 		/*
 	  * DOM methods - common jQuery functions with vanilla JS
 	  */
@@ -775,75 +801,99 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 			return result;
 		},
-		closestByClass: function closestByClass(el, className) {
-			return this.closest(el, function (_el) {
-				return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null;
-			});
-		},
-		closestByTag: function closestByTag(el, tagName) {
-			return this.closest(el, function (_el) {
-				return _el.tagName ? _el.tagName === tagName : null;
-			});
-		},
-		closestByID: function closestByID(el, id) {
-			return this.closest(el, function (_el) {
-				return _el.id ? _el.id === id : null;
-			});
-		},
-		closest: function closest(el, fn) {
-			if (!(el instanceof Element)) return false;
-			return el && (fn(el) ? el : this.closest(el.parentNode, fn));
-		},
-		append: function append(el, child) {
-			var elem = el;
 	
-			if (typeof el == "string") {
-				elem = this.find(el);
+		closest: function closest(el, query) {
+	
+			var searchOrigin = el,
+			    result,
+			    compareFunction,
+			    strippedQuery;
+	
+			if (searchOrigin instanceof _view2.default) searchOrigin = searchOrigin.el;else searchOrigin = this.elementProxy(searchOrigin);
+	
+			if (query.indexOf('.') > -1) {
+				strippedQuery = query.split('.')[1];
+				compareFunction = function compareFunction(_el) {
+					return typeof _el.className == "string" ? _el.className.indexOf(strippedQuery) > -1 : null;
+				};
+			} else if (query.indexOf('#') > -1) {
+				strippedQuery = query.split('#')[1];
+				compareFunction = function compareFunction(_el) {
+					return _el.id ? _el.id === strippedQuery : null;
+				};
+			} else {
+				strippedQuery = query;
+				compareFunction = function compareFunction(_el) {
+					return _el.tagName ? _el.tagName.toLowerCase() === strippedQuery : null;
+				};
 			}
-			if (elem.length) {
-				elem = elem[0];
+	
+			result = closestRecursion(searchOrigin, compareFunction);
+	
+			function closestRecursion(el, fn) {
+				if (!(el instanceof Element)) return false;
+				return el && (fn(el) ? el : closestRecursion(el.parentNode, fn));
 			}
-			elem.appendChild(child);
+	
+			return result;
+		},
+	
+		append: function append(el, child) {
+			var element = this.elementProxy(el);
+			element.appendChild(child);
 		},
 	
 		remove: function remove(el) {
-			var parent = el.parentNode;
+			var element = this.elementProxy(el);
+			var parent = element.parentNode;
 			try {
-				parent.removeChild(el);
+				parent.removeChild(element);
 			} catch (e) {}
 		},
 	
 		hasClass: function hasClass(el, className) {
+			var element = this.elementProxy(el);
 			if (className.length === 0) return false;
-			if (el.classList) return el.classList.contains(className);else return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+			if (element.classList) return element.classList.contains(className);else return new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className);
 		},
 	
 		addClass: function addClass(el, className) {
-			if (className.length === 0) return false;
-			if (el.classList) el.classList.add(className);else el.className += ' ' + className;
+			var elements = this.listProxy(el);
+			_utils2.default.each(elements, function (element) {
+				if (className.length === 0) return false;
+				if (element.classList) element.classList.add(className);else element.className += ' ' + className;
+			});
 		},
 	
 		removeClass: function removeClass(el, className) {
-			if (className.length === 0) return false;
-			if (el.classList) return el.classList.remove(className);else return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+			var elements = this.listProxy(el);
+			_utils2.default.each(elements, function (element) {
+				if (className.length === 0) return false;
+				if (element.classList) return element.classList.remove(className);else return element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+			});
 		},
 	
 		toggleClass: function toggleClass(el, className, test) {
-			if (className.length === 0) return false;
-			if (typeof test != "undefined") {
-				if (test) this.addClass(el, className);else this.removeClass(el, className);
-			} else {
-				if (el.classList) {
-					el.classList.toggle(className);
+			var _this = this;
+	
+			var elements = this.listProxy(el);
+			_utils2.default.each(elements, function (element) {
+				if (className.length === 0) return false;
+				if (typeof test != "undefined") {
+					if (test) _this.addClass(element, className);else _this.removeClass(element, className);
 				} else {
-					var classes = el.className.split(' ');
-					var existingIndex = classes.indexOf(className);
+					if (element.classList) {
+						element.classList.toggle(className);
+					} else {
+						var classes = element.className.split(' ');
+						var existingIndex = classes.indexOf(className);
 	
-					if (existingIndex >= 0) classes.splice(existingIndex, 1);else classes.push(className);
+						if (existingIndex >= 0) classes.splice(existingIndex, 1);else classes.push(className);
 	
-					el.className = classes.join(' ');
+						element.className = classes.join(' ');
+					}
 				}
-			}
+			});
 		}
 	};
 	exports.default = DOM;
