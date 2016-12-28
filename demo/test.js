@@ -3,23 +3,22 @@ import View from '../src/view';
 import DOM from '../src/dom';
 import Utils from '../src/utils';
 
-Log.db("dsfdsfdf")
+// import { View } from '../dist/kernel';
+// import { DOM } from '../dist/kernel';
+// import { Utils } from '../dist/kernel';
+// import { Log } from '../dist/kernel';
 
 class Box extends View {
 
 	constructor(settings) {
-		let defaults = {
-			el:settings.el,
-			events: {
-				'click .js--button-1': 'onClick',
-				'click .js--button-2': 'onClick2',
-				'click .js--button-3': 'onClick3',
-				'click .js--button-4': 'onClick4',
-				'mouseenter': 'onMouseEnter'
-			},
-			displayName: 'Box'
-		}
-		super(defaults);
+		settings.events = {
+			'click .js--button-1': 'onClick',
+			'click .js--button-2': 'onClick2',
+			'click .js--button-3': 'onClick3',
+			'click .js--button-4': 'onClick4',
+			'mouseenter': 'onMouseEnter'
+		};
+		super(settings);
 		var buttons = this.find('.button');
 		DOM.addClass(buttons, 'is-active');
 	}
@@ -44,24 +43,19 @@ class Box extends View {
 	}
 }
 
-let boxes = Utils.viewFactory('.box', Box);
+let boxes = Utils.viewFactory('.box', Box, {displayName:'Lars'});
 
 
 
 class Table extends View {
 
 	constructor(settings) {
-		let defaults = {
-			content: settings.content,
-			el: settings.el,
-			events: {
-				'click .js--button': 'onClick',
-				'mouseenter': 'onMouseEnter'
-			},
-			displayName: 'Table'
+		settings.events = {
+			'click .js--button': 'onClick',
+			'mouseenter': 'onMouseEnter'
 		}
-		super(defaults);
-
+		settings.displayName = 'Table';		
+		super(settings);
 	}
 	onMouseEnter(e) {
 		Log.fn('Table | onMouseEnter');

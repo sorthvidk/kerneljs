@@ -38,11 +38,14 @@ const Utils = {
 	 * @param {String} selector - selector for which elements to associate with Views
 	 * @param {Class} viewClass - a reference to the class from which Views will be instantiated
 	 */
-	viewFactory: function(selector, viewClass) {
+	viewFactory: function(selector, viewClass, settings) {
 		var elements = DOM.find(selector);
 		var views = [];
 		[...elements].map((el) => {
-			views.push( new viewClass( {el:el} ) );
+			let defaults = {el:el};
+			Object.assign(defaults,settings);
+			Log.db("defaults",defaults)
+			views.push( new viewClass( defaults ) );
 		});
 		return views;
 	},
