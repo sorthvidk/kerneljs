@@ -147,7 +147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				this.el = el;
 			}
 	
-			this.eventListeners = [];
+			this.assignedListeners = [];
 			this.delegateEvents();
 	
 			_log2.default.fn(displayName + ' ' + this.instanceId + ' created');
@@ -158,7 +158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			value: function delegateEvents() {
 				var _this = this;
 	
-				if (this.eventListeners.length > 0) throw new Error("Event listeners have already been delegated!");
+				if (this.assignedListeners.length > 0) throw new Error("Event listeners have already been delegated!");
 	
 				var _loop = function _loop(prop) {
 					var eventSplit = prop.split(' ');
@@ -180,7 +180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						elements = [target];
 					}
 					elements.forEach(function (element) {
-						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
+						_this.assignedListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
 						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});
 				};
@@ -199,7 +199,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			value: function undelegateEvents() {
 				var _this2 = this;
 	
-				this.eventListeners.forEach(function (listener) {
+				this.assignedListeners.forEach(function (listener) {
 					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this2));
 				});
 				return true;
@@ -271,6 +271,11 @@ return /******/ (function(modules) { // webpackBootstrap
 			key: 'toggleClass',
 			value: function toggleClass(className, test) {
 				_dom2.default.toggleClass(this.el, className, test);
+			}
+		}, {
+			key: 'closest',
+			value: function closest(selector) {
+				return _dom2.default.closest(this.el, selector);
 			}
 		}]);
 	
@@ -425,7 +430,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Utils is a collection of sorthvid auxilliary methods
 	 */
 	var Utils = {
-	
 		/**
 	  * Creates all Views for a chosen Class
 	  * @param {String} selector - selector for which elements to associate with Views
@@ -634,7 +638,6 @@ return /******/ (function(modules) { // webpackBootstrap
 				// move the document.body
 				move(val);
 				// do the animation unless its over
-				_log2.default.db(currentTime, duration);
 				if (currentTime < duration) {
 					requestAnimFrame(animateScroll);
 				}
@@ -767,6 +770,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	var DOM = {
 	
 		elementProxy: function elementProxy(el) {
@@ -859,7 +864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		addClass: function addClass(el, className) {
 			var elements = this.listProxy(el);
-			_utils2.default.each(elements, function (element) {
+			[].concat(_toConsumableArray(elements)).map(function (element) {
 				if (className.length === 0) return false;
 				if (element.classList) element.classList.add(className);else element.className += ' ' + className;
 			});
@@ -867,7 +872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		removeClass: function removeClass(el, className) {
 			var elements = this.listProxy(el);
-			_utils2.default.each(elements, function (element) {
+			[].concat(_toConsumableArray(elements)).map(function (element) {
 				if (className.length === 0) return false;
 				if (element.classList) return element.classList.remove(className);else return element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 			});
@@ -876,9 +881,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		toggleClass: function toggleClass(el, className, test) {
 			var _this = this;
 	
+			if (className.length === 0) return false;
+	
 			var elements = this.listProxy(el);
-			_utils2.default.each(elements, function (element) {
-				if (className.length === 0) return false;
+			[].concat(_toConsumableArray(elements)).map(function (element) {
 				if (typeof test != "undefined") {
 					if (test) _this.addClass(element, className);else _this.removeClass(element, className);
 				} else {

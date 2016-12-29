@@ -99,7 +99,7 @@ const DOM = {
 
 	addClass: function(el, className) {
 		var elements = this.listProxy(el);
-		Utils.each(elements,element=>{
+		[...elements].map((element) => {
 			if (className.length === 0) return false;
 			if (element.classList)
 				element.classList.add(className);
@@ -110,7 +110,7 @@ const DOM = {
 
 	removeClass: function(el, className) {
 		var elements = this.listProxy(el);
-		Utils.each(elements, element=>{
+		[...elements].map((element) => {
 			if (className.length === 0) return false;
 			if (element.classList)
 				return element.classList.remove(className);
@@ -120,9 +120,10 @@ const DOM = {
 	},
 
 	toggleClass: function(el, className, test) {
+		if (className.length === 0) return false;
+
 		var elements = this.listProxy(el);
-		Utils.each(elements, element=>{
-			if (className.length === 0) return false;
+		[...elements].map((element) => {
 			if (typeof test != "undefined") {
 				if ( test ) this.addClass(element, className);
 				else this.removeClass(element, className);

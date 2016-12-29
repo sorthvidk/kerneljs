@@ -27,12 +27,10 @@ Math.easeOutExpo = function (t, b, c, d) {
 	return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
 };
 
-
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
 const Utils = {
-	
 	/**
 	 * Creates all Views for a chosen Class
 	 * @param {String} selector - selector for which elements to associate with Views
@@ -69,7 +67,7 @@ const Utils = {
 		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
 			return false;
 		}
-
+			
 		for (var i = 0; i < elements.length; i++) {
 			fn(elements[i], i);
 		}
@@ -251,7 +249,6 @@ const Utils = {
 			// move the document.body
 			move(val);
 			// do the animation unless its over
-			Log.db(currentTime,duration)
 			if (currentTime < duration) {
 				requestAnimFrame(animateScroll);
 			}

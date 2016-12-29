@@ -1,7 +1,7 @@
 {
   "name": "kerneljs",
   "version": "1.0.0",
-  "description": "Very slim ES5 javascript framework consisting of one extendable baseclass. Inspired by backbones view class but with no dependencies.   ",
+  "description": "Very slim ES6 javascript framework. Based around a View class.",
   "main": "dist/kernel.js",
   "scripts": {
     "test": "mocha test/index.test.js -w",
@@ -9,7 +9,7 @@
     "build": "webpack"
   },
   "keywords": [
-    "ES5",
+    "ES6",
     "simple",
     "extendable"
   ],
@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "chai": "^3.5.0",
-    "eventemitter3": "^1.2.0",
     "global": "^4.3.1",
     "mocha": "^3.1.2",
     "underscore": "^1.8.3"

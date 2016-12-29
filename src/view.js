@@ -10,6 +10,7 @@ import DOM from './dom';
  * @param {String} displayName A huma readable name for the View
  */
 class View {
+
 	constructor({el = null, content = null, events = null, displayName = 'View' }) { //class constructor
 		
 		this.instanceId = Utils.getCuid();
@@ -25,14 +26,15 @@ class View {
 			this.el = el;
 		}
 
-		this.eventListeners = [];
+		this.assignedListeners = [];
 		this.delegateEvents();
 
 		Log.fn(displayName+' ' + this.instanceId + ' created');
 	}
 
 	delegateEvents() {
-		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
+		if ( this.assignedListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
+		
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
 			let eventName = eventSplit[0];
@@ -55,7 +57,7 @@ class View {
 				elements = [target];
 			}
 			elements.forEach((element)=>{
-				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
+				this.assignedListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
 				Utils.on(element, eventName, eventHandler.bind(this));
 			});
 		}
@@ -65,7 +67,7 @@ class View {
 	* A "private" function, which removes all event listeners
 	*/
 	undelegateEvents() {
-		this.eventListeners.forEach((listener)=>{
+		this.assignedListeners.forEach((listener)=>{
 			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
 		});
 		return true;
@@ -124,6 +126,12 @@ class View {
 	toggleClass(className, test) {
 		DOM.toggleClass(this.el, className, test);
 	}
+
+	closest(selector) {
+		return DOM.closest(this.el, selector);
+	}
 }
+
+
 
 export default View;

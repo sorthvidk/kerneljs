@@ -19,11 +19,13 @@ class Box extends View {
 			'mouseenter': 'onMouseEnter'
 		};
 		super(settings);
+		this.active = false;
 		var buttons = this.find('.button');
 		DOM.addClass(buttons, 'is-active');
 	}
 	onMouseEnter(e) {
-		Log.fn('Box | onMouseEnter',this.instanceId);
+		Log.fn('Box | onMouseEnter',this.instanceId,"this.active="+this.active);
+		this.toggleClass('is-hovered', this.active)
 	}
 	onClick(e) {
 		e.preventDefault();
@@ -34,6 +36,7 @@ class Box extends View {
 		boxes[1].remove();
 	}
 	onClick3(e) {
+		this.active = !this.active;
 		e.preventDefault();
 	}
 	onClick4(e) {
