@@ -2,6 +2,7 @@ import Log from '../src/log';
 import View from '../src/view';
 import DOM from '../src/dom';
 import Utils from '../src/utils';
+import Emmet from '../src/emmet';
 
 // import { View } from '../dist/kernel';
 // import { DOM } from '../dist/kernel';
@@ -57,7 +58,7 @@ class Table extends View {
 			'click .js--button': 'onClick',
 			'mouseenter': 'onMouseEnter'
 		}
-		settings.displayName = 'Table';		
+		settings.displayName = 'Table';
 		super(settings);
 	}
 	onMouseEnter(e) {
@@ -72,12 +73,45 @@ class Table extends View {
 	}
 }
 
+class CookieAccept extends View {
+
+	constructor(settings = {}) {
+		settings = settings || {};
+
+		Object.assign(settings, {
+			events: {
+				'click .js--button': 'onClick',
+				'mouseenter': 'onMouseEnter'
+			},
+			displayName: 'Cookie-accept',
+			el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
+			data: {
+				heading: 'heading text ',
+				text: 'cookie kasse'
+
+			},
+			mount: '.container'
+		})
+		super(settings);
+	}
+	onMouseEnter(e) {
+		Log.fn('Table | onMouseEnter');
+	}
+	onClick(e) {
+		Log.db("cookie",Utils.cookie.get('cookietest'))
+		e.preventDefault();
+		this.update()
+	}
+}
+
 
 //TESTS
 
+var cookie = new CookieAccept();
+
 
 let table1 = new Table({el: DOM.find('#table')[0] });
-let table2 = new Table({el: 'div.table-test.class2.class3', content:'<a class="js--button">TEST cookie get</a>'});
+let table2 = new Table({el: 'div.table-test.class2.class3>a.js--button{TEST cookie}'});
 table2.render();
 
 
