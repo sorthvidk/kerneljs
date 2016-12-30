@@ -24,7 +24,7 @@ class View {
 		else {
 			this.el = el;
 		}
-		this.eventListeners = [];
+		this.assignedListeners = [];
 		this.delegateEvents();
 		this.update();
 		Log.fn(displayName+' ' + this.instanceId + ' created');
@@ -35,7 +35,7 @@ class View {
 
 	delegateEvents() {
 		if ( this.assignedListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
-		
+
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
 			let eventName = eventSplit[0];
