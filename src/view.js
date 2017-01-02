@@ -35,8 +35,8 @@ class View {
 	}
 
 	delegateEvents() {
-		if ( this.assignedListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
 
+		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
 			let eventName = eventSplit[0];
@@ -59,7 +59,7 @@ class View {
 				elements = [target];
 			}
 			elements.forEach((element)=>{
-				this.assignedListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
+				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
 				Utils.on(element, eventName, eventHandler.bind(this));
 			});
 		}
@@ -83,7 +83,7 @@ class View {
 	* A "private" function, which removes all event listeners
 	*/
 	undelegateEvents() {
-		this.assignedListeners.forEach((listener)=>{
+		this.eventListeners.forEach((listener)=>{
 			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
 		});
 		return true;
@@ -104,12 +104,11 @@ class View {
 	* A "public" function, which re-inserts the view's el into the DOM
 	* Sets the View's visible property to true
 	**/
-	render() {
-		if ( !this.visible && this.mountPoint) {
-
-			let nodes = Array.prototype.slice.call(this.el.childNodes);
-			DOM.append( DOM.find(this.mountPoint), this.el);
-			this.el = nodes[0];
+	render(mountPoint = null) {
+		if ( !this.visible ) {
+			if ( mountPoint ) DOM.append( DOM.find(mountPoint), this.el);
+			else if ( this.mountPoint ) DOM.append( DOM.find(this.mountPoint), this.el);
+			else throw new Error("Can't render! No mountpoint found!")
 			this.visible = true;
 		}
 		return this;

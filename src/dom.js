@@ -5,26 +5,32 @@ import Utils from './utils';
 const DOM = {
 
 	elementProxy:function(el) {
-		if ( el instanceof HTMLElement || !el.length ) {
+		if ( el instanceof View ) {
+			return el.el;
+		}
+		else if ( el instanceof HTMLElement || !el.length ) {
 			return el;
 		}
 		else if ( el instanceof NodeList ) {
 			return el[0];
 		}
 		else {
-			throw new Error("Element neither HTMLElement nor NodeList. el: "+el);
+			throw new Error("Element neither View, HTMLElement nor NodeList. el: "+el);
 		}
 	},
 
 	listProxy:function(el) {
-		if ( el instanceof NodeList ) {
+		if ( el instanceof View ) {
+			return [el.el];
+		}
+		else if ( el instanceof NodeList ) {
 			return el;
 		}
 		else if ( el instanceof HTMLElement || !el.length ) {
 			return [el];
 		}
 		else {
-			throw new Error("Element neither HTMLElement nor NodeList. el: "+el);
+			throw new Error("Element neither View, HTMLElement nor NodeList. el: "+el);
 		}
 	},
 	/*
@@ -74,7 +80,6 @@ const DOM = {
 
 		return result;
 	},
-
 
 	append:function(el,child){
 		var element = this.elementProxy(el);
