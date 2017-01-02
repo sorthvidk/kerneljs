@@ -28,8 +28,21 @@ module.exports = {
 		          	presets: ['es2015']
 		        }
 	      	}
-	    ]
+	    ],
+	    postLoaders: [
+			{
+				test: [/\.js$/],
+				exclude: /node_modules/,
+				loader: 'documentation'
+  			}
+      	]
   	},
+	documentation: {
+        entry: './src/*.js',
+        github: true,
+        format: 'html',
+        output: './documentation/js'
+    },
 	devtool: 'source-map'
 };
 

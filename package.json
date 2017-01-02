@@ -26,6 +26,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "documentation-loader": "^0.1.1-beta",
     "es6-event-emitter": "^1.5.2",
     "popmotion": "^5.0.20"
   }
