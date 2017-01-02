@@ -2,6 +2,7 @@ import Log from './log';
 import Utils from './utils';
 import DOM from './dom';
 import Emmet from './emmet';
+import { EventEmitter } from './event';
 
 /**
  * View is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
@@ -12,7 +13,7 @@ import Emmet from './emmet';
  */
 class View {
 	constructor({el = null, content = null, events = null, displayName = 'View', templ = null, data = null, mount = null }) { //class constructor
-
+		this.EventEmitter = EventEmitter;
 		this.instanceId = Utils.getCuid();
 		this.events = events;
 		this.data = data;
@@ -81,7 +82,7 @@ class View {
 	/*
 	* A "private" function, which removes all event listeners
 	*/
-	static undelegateEvents() {
+	undelegateEvents() {
 		this.assignedListeners.forEach((listener)=>{
 			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
 		});
@@ -105,7 +106,10 @@ class View {
 	**/
 	render() {
 		if ( !this.visible && this.mountPoint) {
+
+			let nodes = Array.prototype.slice.call(this.el.childNodes);
 			DOM.append( DOM.find(this.mountPoint), this.el);
+			this.el = nodes[0];
 			this.visible = true;
 		}
 		return this;
