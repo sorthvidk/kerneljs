@@ -20,7 +20,9 @@ window.emitter = new Emitter();
 class Overlay extends View {
 
 	constructor(settings){
-		
+		settings.events = {
+			'click':'onClick'
+		}
 		settings.displayName = 'Overlay';
 		settings.el = 'div.overlay.overlay--modal';
 		super(settings);
@@ -34,7 +36,9 @@ class Overlay extends View {
 		super.render(mountPoint);		
 		this.addClass('is-active');	
 	}
-	onClick(e){
+
+	onClick(e) {
+		Log.fn("Overlay | onClick");
 		if(e.target != this.el) { return false; }
 		View.emitter.trigger('overlay:clicked', e);
 		this.close();
@@ -170,19 +174,17 @@ class Table extends View {
 
 	constructor(settings) {
 		settings.events = {
-			'mouseenter': 'onMouseEnter'
+			'click':'onClick'
 		}
 		settings.displayName = 'Table';
 		super(settings);
-
 	}
 	onMouseEnter(e) {
 		Log.fn('Table | onMouseEnter');
 	}
 	onClick(e) {
 		Log.db("cookie",Utils.cookie.get('cookietest'))
-		e.preventDefault();
-		
+		e.preventDefault();		
 	}
 	render() {
 		DOM.append( DOM.find('body'), this.el);
@@ -232,7 +234,7 @@ var cookie = new CookieAccept();
 var move = new Move();
 
 
-let table1 = new Table({el: DOM.find('#table')[0] });
+let table1 = new Table({el: DOM.find('#table') });
 let table2 = new Table({el: 'div.table-test.class2.class3>a.js--button{TEST cookie}'});
 table2.render();
 

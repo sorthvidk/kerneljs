@@ -7,12 +7,12 @@ const WebpackDevServer = require("webpack-dev-server");
 
 
 module.exports = {
-  	entry: {
+	entry: {
 		'kernel': './index.js',
 		'test': './demo/test.js'
 
 	},
-  	output: {
+	output: {
 		path: './dist',
 		filename: '[name].js',
 		publicPath: "/dist",
@@ -20,30 +20,36 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-	    	{
-		        test: /.js?$/,
-		        loader: 'babel-loader',
-		        exclude: /node_modules/,
-		        query: {
-		          	presets: ['es2015']
-		        }
-	      	}
-	    ],
-	    postLoaders: [
+			{
+				test: /.js?$/,
+				loader: 'babel-loader',
+				exclude: /node_modules/,
+				query: {
+					presets: ['es2015']
+				}
+			}
+		],
+		postLoaders: [
 			{
 				test: [/\.js$/],
 				exclude: /node_modules/,
 				loader: 'documentation'
-  			}
-      	]
-  	},
+			}
+		]
+	},
 	documentation: {
-        entry: './src/*.js',
-        github: true,
-        format: 'html',
-        output: './documentation/js'
-    },
-	devtool: 'source-map'
+		entry: './src/*.js',
+		github: true,
+		format: 'html',
+		output: './documentation/js'
+	},
+	devtool: 'source-map',
+	devServer: {
+		historyApiFallback: true,
+		contentBase: './',
+		inline: true,
+		port : 3000
+	}
 };
 
 
