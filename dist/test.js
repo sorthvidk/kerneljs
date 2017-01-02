@@ -436,8 +436,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 		}, {
 			key: 'append',
-			value: function append(elem) {
-				_dom2.default.append(this.el, elem);
+			value: function append(docFragment) {
+				_dom2.default.append(this.el, docFragment);
 			}
 	
 			/**
@@ -936,22 +936,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DOM = {
 	
 		elementProxy: function elementProxy(el) {
-			if (el instanceof HTMLElement || !el.length) {
+			if (el instanceof _view2.default) {
+				return el.el;
+			} else if (el instanceof HTMLElement || !el.length) {
 				return el;
 			} else if (el instanceof NodeList) {
 				return el[0];
 			} else {
-				throw new Error("Element neither HTMLElement nor NodeList. el: " + el);
+				throw new Error("Element neither View, HTMLElement nor NodeList. el: " + el);
 			}
 		},
 	
 		listProxy: function listProxy(el) {
-			if (el instanceof NodeList) {
+			if (el instanceof _view2.default) {
+				return [el.el];
+			} else if (el instanceof NodeList) {
 				return el;
 			} else if (el instanceof HTMLElement || !el.length) {
 				return [el];
 			} else {
-				throw new Error("Element neither HTMLElement nor NodeList. el: " + el);
+				throw new Error("Element neither View, HTMLElement nor NodeList. el: " + el);
 			}
 		},
 		/*
@@ -1006,6 +1010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		append: function append(el, child) {
 			var element = this.elementProxy(el);
+			_log2.default.fn("DOM append", element, child);
 			element.appendChild(child);
 		},
 	

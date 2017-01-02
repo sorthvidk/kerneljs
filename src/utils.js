@@ -212,7 +212,7 @@ const Utils = {
 			// move the document.body
 			move(val);
 			// do the animation unless its over
-			Log.db(currentTime,duration)
+			//Log.db(currentTime,duration)
 			if (currentTime < duration) {
 				requestAnimFrame(animateScroll);
 			}

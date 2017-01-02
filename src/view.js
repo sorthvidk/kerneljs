@@ -12,8 +12,8 @@ import { EventEmitter } from './event';
  * @param {String} displayName A huma readable name for the View
  */
 class View {
+
 	constructor({el = null, content = null, events = null, displayName = 'View', templ = null, data = null, mount = null }) { //class constructor
-		this.EventEmitter = EventEmitter;
 		this.instanceId = Utils.getCuid();
 		this.events = events;
 		this.data = data;
@@ -25,7 +25,7 @@ class View {
 		else {
 			this.el = el;
 		}
-		this.assignedListeners = [];
+		this.eventListeners = [];
 		this.delegateEvents();
 		this.update();
 		Log.fn(displayName+' ' + this.instanceId + ' created');
@@ -104,8 +104,9 @@ class View {
 	* Sets the View's visible property to true
 	**/
 	render(mountPoint = null) {
+		if ( mountPoint ) this.mountPoint = mountPoint;
 		if ( !this.visible ) {
-			if ( mountPoint || this.mountPoint) {
+			if ( this.mountPoint ) {
 				let nodes = Array.prototype.slice.call(this.el.childNodes);
 				DOM.append( DOM.find(this.mountPoint), this.el);
 				this.el = nodes[0];
@@ -115,8 +116,9 @@ class View {
 		return this;
 	}
 
-	append(elem) {
-		DOM.append(this.el, elem);
+	append(docFragment) {
+		Log.fn("View append", this.el, docFragment.childNodes)
+		DOM.append(this.el, docFragment);
 	}
 
 	/**
@@ -148,6 +150,11 @@ class View {
 	closest(selector) {
 		return DOM.closest(this.el, selector);
 	}
+
+	static get emitter() {
+		return EventEmitter;
+	}
+
 }
 
 

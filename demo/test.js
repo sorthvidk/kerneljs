@@ -11,6 +11,79 @@ import * as motion from 'popmotion'; //https://popmotion.io/
 // import { Utils } from '../dist/kernel';
 // import { Log } from '../dist/kernel';
 
+import Emitter from 'es6-event-emitter';
+window.emitter = new Emitter();
+
+
+
+
+class Overlay extends View {
+
+	constructor(settings){
+		settings.events = {
+			'click': 'onClick'
+		};
+		settings.displayName = 'Overlay';
+		settings.el = 'div.overlay.overlay--modal';
+		super(settings);
+
+		this.bodyRef = DOM.find('body');
+
+		View.emitter.on('modal:close', this.close.bind(this));		
+	}
+
+	render(mountPoint) {
+		super.render(mountPoint);		
+		this.addClass('is-active');	
+	}
+	onClick(e){
+		if(e.target != this.el) { return false; }
+		View.emitter.trigger('overlay:clicked', e);
+		this.close();
+	}
+	close(e) {
+		DOM.removeClass(this.bodyRef,'is-fixed');
+		DOM.removeClass(this.bodyRef,'is-blurred');
+		this.remove();
+	}
+}
+
+
+class ModalBox extends View {	
+
+	constructor(settings){
+		
+		settings.events = {
+			'click .js--close-modal': 'onClose'
+		};
+		settings.displayName = 'ModalBox';
+		settings.el = 'div.modal.'+settings.cssClasses+'>a.button.button--icon.has-icon.js--close-modal[href=""]>span.icon[data-text="close"]^div.modal__content.js--modal-content';		
+		settings.data = {close:'×'};
+		super(settings);
+
+		this.content = settings.content;
+
+		this.overlay = new Overlay({ isFixed: true, fixBody: settings.fixBody });		
+
+		View.emitter.on('overlay:clicked', this.close.bind(this));
+	}
+	render() {
+		this.find('.js--modal-content')[0].innerHTML = this.content;		
+		this.overlay.render('body');
+		this.overlay.append(this.el);
+		View.emitter.trigger('modalbox:rendered', this);
+	}
+	onClose(e) {
+		e.stopPropagation();
+		View.emitter.trigger('modal:close');
+		this.close();
+	}
+	close() {
+		this.remove();
+	}
+}
+
+
 class Box extends View {
 
 	constructor(settings) {
@@ -19,6 +92,7 @@ class Box extends View {
 			'click .js--button-2': 'onClick2',
 			'click .js--button-3': 'onClick3',
 			'click .js--button-4': 'onClick4',
+			'click .js--button-5': 'onClick5',
 			'mouseenter': 'onMouseEnter'
 		};
 		super(settings);
@@ -41,9 +115,14 @@ class Box extends View {
 	onClick3(e) {
 		this.active = !this.active;
 		e.preventDefault();
-		this.EventEmitter.trigger('view:action', this);
+		View.emitter.trigger('view:action', this);
 	}
 	onClick4(e) {
+		e.preventDefault();
+		this.modal = new ModalBox({ content: '<div>We did it!</div>', cssClasses:'modal--success', fixBody:true});
+		this.modal.render();
+	}
+	onClick5(e) {
 		e.preventDefault();
 		Log.fn("onClick4")
 		Utils.scrollTo(boxes[0], 2000);
@@ -64,7 +143,6 @@ class Move extends View {
 			el: 'div.move[data-text="text"]',
 			data: {
 				text: 'move box'
-
 			},
 			mount: 'body'
 		})
@@ -74,14 +152,14 @@ class Move extends View {
 			yoyo: 6,
 			values: {
 		        x: {
-		            to: 200
+		            to: -200
 		        },
 		        y: {
 		        	to: -200
 		        }
 		    },
-		    onFrame: (state) => { console.log('x: ', state.x) },
-		    onStart: (e) => { console.log(e) }
+		    onFrame: (state) => {}, //console.log('x: ', state.x) },
+		    onStart: (e) => {} //console.log(e) }
 		})
 
 	}
@@ -99,6 +177,7 @@ class Table extends View {
 		}
 		settings.displayName = 'Table';
 		super(settings);
+
 	}
 	onMouseEnter(e) {
 		Log.fn('Table | onMouseEnter');
@@ -106,6 +185,7 @@ class Table extends View {
 	onClick(e) {
 		Log.db("cookie",Utils.cookie.get('cookietest'))
 		e.preventDefault();
+		
 	}
 	render() {
 		DOM.append( DOM.find('body'), this.el);
@@ -132,10 +212,10 @@ class CookieAccept extends View {
 			mount: '.container'
 		})
 		super(settings);
-		this.EventEmitter.on("view:action", this.onAction.bind(this));
+		View.emitter.on("view:action", this.onAction.bind(this));
 	}
 	onAction(e) {
-		console.log(this, e);
+		Log.fn("onAction",this, e);
 	}
 	onMouseEnter(e) {
 		Log.fn('Table | onMouseEnter');
@@ -146,6 +226,8 @@ class CookieAccept extends View {
 		this.update()
 	}
 }
+
+
 
 
 //TESTS
