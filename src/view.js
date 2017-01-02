@@ -11,13 +11,12 @@ import { EventEmitter } from './event';
  * @param {String} content Optional string HTML content to be injected into a generated element
  * @param {Object} events A json object containing the events for the instance
  * @param {String} displayName A huma readable name for the View
- * @param {String} templ An emmet string defining this.el HTML struckture
  * @param {Object} data A json object containing text strings to be added to markup with data attributes data-text=key
  * @param {String} mount if a mount is provided the view automatically mount to the given point
  */
 class View {
 
-	constructor({el = null, content = null, events = null, displayName = 'View', templ = null, data = null, mount = null }) { //class constructor
+	constructor({el = null, content = null, events = null, displayName = 'View', data = null, mount = null }) { //class constructor
 		this.instanceId = Utils.getCuid();
 		this.events = events;
 		this.data = data;
