@@ -11,8 +11,8 @@ const type = {
 
 /**
  * Logging wrapper for debugging
- * @param {args} - A list of parameters, where the first parameter can be a type as specified in the "type" object 
- */	
+ * @param {args} - A list of parameters, where the first parameter can be a type as specified in the "type" object
+ */
 
 const Log = {
 
@@ -28,7 +28,7 @@ const Log = {
 
 		if ( console ){
 			if (console.log) {
-				if (console.log.apply) { console.log.apply(console, args); } 
+				if (console.log.apply) { console.log.apply(console, args); }
 				else { console.log(args); } // nicer display in some browsers
 			}
 		}
@@ -36,23 +36,23 @@ const Log = {
 
 	/*
 	* Auxilliary functions for easy access
-	* db - "debug", used for signifying, that the logged text is a general debugging statement
-	* dt - "data", used for signifying, that the logged text is raw data
-	* fn - "function", used for signifying, that the text is logged when a function is invoked
-	*/	
+	* @parm {Function} db - "debug", used for signifying, that the logged text is a general debugging statement
+	* @parm {Function} dt - "data", used for signifying, that the logged text is raw data
+	* @parm {Function} fn - "function", used for signifying, that the text is logged when a function is invoked
+	*/
 	db: function(...args) {
-		this.write(type.debug, args); 
-	},	
-	dt: function(...args) { 
-		this.write(type.data, args); 
+		this.write(type.debug, args);
 	},
-	fn: function(...args) { 
-		this.write(type.func, args); 
+	dt: function(...args) {
+		this.write(type.data, args);
 	},
-	er: function(...args) { 
-		this.write(type.error, args); 
+	fn: function(...args) {
+		this.write(type.func, args);
+	},
+	er: function(...args) {
+		this.write(type.error, args);
 	}
-	
+
 }
 
 

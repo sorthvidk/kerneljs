@@ -1,10 +1,14 @@
 # KernelJS #
+KernelJS is sorthvid's main view class used for small progressive enhanced web projects.
+
+## Documentation ##
+See [documentation](/documentation/js) for the project
+
 
 ## Changelog ##
-1.0.0: first version 
-2.0.0: converted to ES6
-
-
+* 2.0.1: fixed small bugs
+* 2.0.0: converted to ES6
+* 1.0.0: first version 
 
 
 ## TODO ##

@@ -4,12 +4,16 @@ import DOM from './dom';
 import Emmet from './emmet';
 import { EventEmitter } from './event';
 
+
 /**
- * View is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
+ * $0 is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
  * @param {Element} el The associated DOMelement OR a string shorthand for generating an element
  * @param {String} content Optional string HTML content to be injected into a generated element
  * @param {Object} events A json object containing the events for the instance
  * @param {String} displayName A huma readable name for the View
+ * @param {String} templ An emmet string defining this.el HTML struckture
+ * @param {Object} data A json object containing text strings to be added to markup with data attributes data-text=key
+ * @param {String} mount if a mount is provided the view automatically mount to the given point
  */
 class View {
 
@@ -34,6 +38,9 @@ class View {
 		}
 	}
 
+	/**
+	* delegating HTML events
+	*/
 	delegateEvents() {
 		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
 		for (let prop in this.events) {
@@ -64,13 +71,13 @@ class View {
 		}
 	}
 
-	/*
-	* A "public" function, update all data-tmpl data attributes
+	/**
+	* A "public" function, updates all data-text data attributes TODO: write an accutal update of existing textNodes..
 	*/
 	update() {
 		if(!this.data) return;
 		Object.keys(this.data).forEach((item)=>{
-			let el = DOM.find(this.el, '[data-text='+ item +']')[0];
+			let el = DOM.find(this.el,'[data-text='+ item +']')[0];
 			if(el && this.data[item]) {
 				el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
 			}
@@ -78,7 +85,7 @@ class View {
 	}
 
 
-	/*
+	/**
 	* A "private" function, which removes all event listeners
 	*/
 	undelegateEvents() {
@@ -88,7 +95,7 @@ class View {
 		return true;
 	}
 
-	/*
+	/**
 	* A "public" function, which removes the view's el from the DOM
 	* Sets the View's visible property to false
 	*/
@@ -102,7 +109,8 @@ class View {
 	/**
 	* A "public" function, which re-inserts the view's el into the DOM
 	* Sets the View's visible property to true
-	**/
+	* @param {String} mountPoint string containing a valid class or id selector
+	*/
 	render(mountPoint = null) {
 		if ( mountPoint ) this.mountPoint = mountPoint;
 		if ( !this.visible ) {
@@ -115,15 +123,16 @@ class View {
 		}
 		return this;
 	}
-
-	append(docFragment) {
-		Log.fn("View append", this.el, docFragment.childNodes)
-		DOM.append(this.el, docFragment);
+	/**
+	* A "public" function, which append a given elem/docFragtion into this.el
+	*/
+	append(elem) {
+		DOM.append(this.el, elem);
 	}
 
 	/**
-	 * Wrappers for DOM manipulation methods always using this.el as the origin
-	 **/
+	* Wrappers for DOM manipulation methods always using this.el as the origin
+	*/
   	find(selector) {
   		var result = DOM.find(this.el, selector);
   		return result;
