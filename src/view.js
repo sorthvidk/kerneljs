@@ -27,8 +27,11 @@ class View {
 			this.rootEl = Emmet(el);
 			this.el = this.rootEl.childNodes[0];
 		}
+		else if (el instanceof NodeList && el.length === 0 ) {
+			throw new Error("View el is empty NodeList!");
+		}
 		else {
-			this.el = el;
+			this.el = DOM.elementProxy(el);
 		}
 		this.eventListeners = [];
 		this.delegateEvents();

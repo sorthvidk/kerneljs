@@ -134,6 +134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'onClick',
 			value: function onClick(e) {
+				_log2.default.fn("Overlay | onClick");
 				if (e.target != this.el) {
 					return false;
 				}
@@ -279,7 +280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			Object.assign(settings, {
 				events: {
-					'click .move': 'onClick'
+					'click': 'onClick'
 				},
 				displayName: 'Cookie-accept',
 				el: 'div.move[data-text="text"]',
@@ -327,8 +328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			_classCallCheck(this, Table);
 	
 			settings.events = {
-				'click .js--button': 'onClick',
-				'mouseenter': 'onMouseEnter'
+				'click': 'onClick'
 			};
 			settings.displayName = 'Table';
 			return _possibleConstructorReturn(this, Object.getPrototypeOf(Table).call(this, settings));
@@ -367,15 +367,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			Object.assign(settings, {
 				events: {
-					'click .js--button': 'onClick',
-					'mouseenter': 'onMouseEnter'
+					//'click .js--button': 'onClick',
+					'click': 'onClick'
 				},
 				displayName: 'Cookie-accept',
 				el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
 				data: {
-					heading: 'heading text ',
-					text: 'cookie kasse'
-	
+					heading: 'heading text  g f dsf dsf dsfdsf ',
+					text: 'cookie kasse sdf dsf sdf dsf'
 				},
 				mount: '.container'
 			});
@@ -394,12 +393,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'onMouseEnter',
 			value: function onMouseEnter(e) {
-				_log2.default.fn('Table | onMouseEnter');
+				_log2.default.fn('CookieAccept | onMouseEnter');
 			}
 		}, {
 			key: 'onClick',
 			value: function onClick(e) {
-				_log2.default.db("cookie", _utils2.default.cookie.get('cookietest'));
+				_log2.default.db("CookieAccept | onClick", _utils2.default.cookie.get('cookietest'));
 				e.preventDefault();
 				this.update();
 			}
@@ -413,7 +412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var cookie = new CookieAccept();
 	var move = new Move();
 	
-	var table1 = new Table({ el: _dom2.default.find('#table')[0] });
+	var table1 = new Table({ el: _dom2.default.find('#table') });
 	var table2 = new Table({ el: 'div.table-test.class2.class3>a.js--button{TEST cookie}' });
 	table2.render();
 	
@@ -504,8 +503,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			if (typeof el == "string") {
 				this.el = (0, _emmet2.default)(el);
+			} else if (el instanceof NodeList && el.length === 0) {
+				throw new Error("View el is empty NodeList!");
 			} else {
-				this.el = el;
+				this.el = _dom2.default.elementProxy(el);
 			}
 			this.eventListeners = [];
 			this.delegateEvents();
@@ -544,13 +545,11 @@ return /******/ (function(modules) { // webpackBootstrap
 					} else if (target.length && target != _this.el) {
 						elements = _dom2.default.find(_this.el, target[0]);
 					} else {
-						//wrapping this.el in array
-						elements = [target];
+						elements = [_this.el];
 					}
 	
-					_log2.default.db("delegateEvents elements", elements);
-	
 					[].concat(_toConsumableArray(elements)).map(function (element) {
+						_log2.default.db("delegateEvents element", element);
 						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
 						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});
@@ -622,9 +621,9 @@ return /******/ (function(modules) { // webpackBootstrap
 				if (mountPoint) this.mountPoint = mountPoint;
 				if (!this.visible) {
 					if (this.mountPoint) {
-						var nodes = Array.prototype.slice.call(this.el.childNodes);
+						//let nodes = Array.prototype.slice.call(this.el.childNodes);
 						_dom2.default.append(_dom2.default.find(this.mountPoint), this.el);
-						this.el = nodes[0];
+						//this.el = nodes[0];
 						this.visible = true;
 					} else throw new Error("Can't render! No mountpoint found!");
 				}
@@ -1349,7 +1348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			el = emmetUtils[part.charAt(0)].call(el, part.substr(1), root) || el;
 		}
 		//add.insert(node, root, ref); NEEDS TO BE HANDLED
-		return root;
+		return Array.prototype.slice.call(root.childNodes)[0];
 	};
 	exports.default = emmet;
 

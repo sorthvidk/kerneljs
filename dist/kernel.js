@@ -155,8 +155,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			if (typeof el == "string") {
 				this.el = (0, _emmet2.default)(el);
+			} else if (el instanceof NodeList && el.length === 0) {
+				throw new Error("View el is empty NodeList!");
 			} else {
-				this.el = el;
+				this.el = _dom2.default.elementProxy(el);
 			}
 			this.eventListeners = [];
 			this.delegateEvents();
@@ -195,13 +197,11 @@ return /******/ (function(modules) { // webpackBootstrap
 					} else if (target.length && target != _this.el) {
 						elements = _dom2.default.find(_this.el, target[0]);
 					} else {
-						//wrapping this.el in array
-						elements = [target];
+						elements = [_this.el];
 					}
 	
-					_log2.default.db("delegateEvents elements", elements);
-	
 					[].concat(_toConsumableArray(elements)).map(function (element) {
+						_log2.default.db("delegateEvents element", element);
 						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
 						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});
@@ -273,9 +273,9 @@ return /******/ (function(modules) { // webpackBootstrap
 				if (mountPoint) this.mountPoint = mountPoint;
 				if (!this.visible) {
 					if (this.mountPoint) {
-						var nodes = Array.prototype.slice.call(this.el.childNodes);
+						//let nodes = Array.prototype.slice.call(this.el.childNodes);
 						_dom2.default.append(_dom2.default.find(this.mountPoint), this.el);
-						this.el = nodes[0];
+						//this.el = nodes[0];
 						this.visible = true;
 					} else throw new Error("Can't render! No mountpoint found!");
 				}
@@ -1000,7 +1000,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			el = emmetUtils[part.charAt(0)].call(el, part.substr(1), root) || el;
 		}
 		//add.insert(node, root, ref); NEEDS TO BE HANDLED
-		return root;
+		return Array.prototype.slice.call(root.childNodes)[0];
 	};
 	exports.default = emmet;
 
