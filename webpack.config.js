@@ -43,13 +43,7 @@ module.exports = {
 		format: 'html',
 		output: './documentation/js'
 	},
-	devtool: 'source-map',
-	devServer: {
-		historyApiFallback: true,
-		contentBase: './',
-		inline: true,
-		port : 3000
-	}
+	devtool: 'source-map'
 };
 
 
