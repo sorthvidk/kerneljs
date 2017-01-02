@@ -74,6 +74,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _utils2 = _interopRequireDefault(_utils);
 	
+	var _emmet = __webpack_require__(5);
+	
+	var _emmet2 = _interopRequireDefault(_emmet);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -182,10 +186,56 @@ return /******/ (function(modules) { // webpackBootstrap
 		return Table;
 	}(_view2.default);
 	
+	var CookieAccept = function (_View3) {
+		_inherits(CookieAccept, _View3);
+	
+		function CookieAccept() {
+			var settings = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			_classCallCheck(this, CookieAccept);
+	
+			settings = settings || {};
+	
+			Object.assign(settings, {
+				events: {
+					'click .js--button': 'onClick',
+					'mouseenter': 'onMouseEnter'
+				},
+				displayName: 'Cookie-accept',
+				el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
+				data: {
+					heading: 'heading text ',
+					text: 'cookie kasse'
+	
+				},
+				mount: '.container'
+			});
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(CookieAccept).call(this, settings));
+		}
+	
+		_createClass(CookieAccept, [{
+			key: 'onMouseEnter',
+			value: function onMouseEnter(e) {
+				_log2.default.fn('Table | onMouseEnter');
+			}
+		}, {
+			key: 'onClick',
+			value: function onClick(e) {
+				_log2.default.db("cookie", _utils2.default.cookie.get('cookietest'));
+				e.preventDefault();
+				this.update();
+			}
+		}]);
+	
+		return CookieAccept;
+	}(_view2.default);
+	
 	//TESTS
 	
+	var cookie = new CookieAccept();
+	
 	var table1 = new Table({ el: _dom2.default.find('#table')[0] });
-	var table2 = new Table({ el: 'div.table-test.class2.class3', content: '<a class="js--button">TEST cookie get</a>' });
+	var table2 = new Table({ el: 'div.table-test.class2.class3>a.js--button{TEST cookie}' });
 	table2.render();
 	
 	_log2.default.db(table1.hasClass('table'));
@@ -228,6 +278,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
+	var _emmet = __webpack_require__(5);
+	
+	var _emmet2 = _interopRequireDefault(_emmet);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -250,6 +304,12 @@ return /******/ (function(modules) { // webpackBootstrap
 			var events = _ref$events === undefined ? null : _ref$events;
 			var _ref$displayName = _ref.displayName;
 			var displayName = _ref$displayName === undefined ? 'View' : _ref$displayName;
+			var _ref$templ = _ref.templ;
+			var templ = _ref$templ === undefined ? null : _ref$templ;
+			var _ref$data = _ref.data;
+			var data = _ref$data === undefined ? null : _ref$data;
+			var _ref$mount = _ref.mount;
+			var mount = _ref$mount === undefined ? null : _ref$mount;
 	
 			_classCallCheck(this, View);
 	
@@ -257,20 +317,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			this.instanceId = _utils2.default.getCuid();
 			this.events = events;
+			this.data = data;
+			this.mountPoint = mount;
 	
 			if (typeof el == "string") {
-				this.el = _utils2.default.createEl(el);
-				if (content) {
-					this.el.innerHTML = content;
-				}
+				this.el = (0, _emmet2.default)(el);
 			} else {
 				this.el = el;
 			}
-	
-			this.assignedListeners = [];
+			this.eventListeners = [];
 			this.delegateEvents();
-	
+			this.update();
 			_log2.default.fn(displayName + ' ' + this.instanceId + ' created');
+			if (this.mountPoint) {
+				this.render();
+			}
 		}
 	
 		_createClass(View, [{
@@ -278,7 +339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			value: function delegateEvents() {
 				var _this = this;
 	
-				if (this.assignedListeners.length > 0) throw new Error("Event listeners have already been delegated!");
+				if (this.eventListeners.length > 0) throw new Error("Event listeners have already been delegated!");
 	
 				var _loop = function _loop(prop) {
 					var eventSplit = prop.split(' ');
@@ -300,7 +361,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						elements = [target];
 					}
 					elements.forEach(function (element) {
-						_this.assignedListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
+						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
 						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});
 				};
@@ -311,16 +372,34 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 	
 			/*
+	  * A "public" function, update all data-tmpl data attributes
+	  */
+	
+		}, {
+			key: 'update',
+			value: function update() {
+				var _this2 = this;
+	
+				if (!this.data) return;
+				Object.keys(this.data).forEach(function (item) {
+					var el = _dom2.default.find(_this2.el, '[data-text=' + item + ']')[0];
+					if (el && _this2.data[item]) {
+						el.insertBefore(document.createTextNode(_this2.data[item]), el.firstChild);
+					}
+				});
+			}
+	
+			/*
 	  * A "private" function, which removes all event listeners
 	  */
 	
 		}, {
 			key: 'undelegateEvents',
 			value: function undelegateEvents() {
-				var _this2 = this;
+				var _this3 = this;
 	
-				this.assignedListeners.forEach(function (listener) {
-					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this2));
+				this.eventListeners.forEach(function (listener) {
+					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this3));
 				});
 				return true;
 			}
@@ -347,9 +426,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'render',
 			value: function render() {
-				if (!this.visible) {
+				var mountPoint = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 	
-					this.el.parent.appendChild(this.el);
+				if (!this.visible) {
+					if (mountPoint) _dom2.default.append(_dom2.default.find(mountPoint), this.el);else if (this.mountPoint) _dom2.default.append(_dom2.default.find(this.mountPoint), this.el);else throw new Error("Can't render! No mountpoint found!");
 					this.visible = true;
 				}
 				return this;
@@ -504,8 +584,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
 	var _log = __webpack_require__(2);
 	
 	var _log2 = _interopRequireDefault(_log);
@@ -550,6 +628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Utils is a collection of sorthvid auxilliary methods
 	 */
 	var Utils = {
+	
 		/**
 	  * Creates all Views for a chosen Class
 	  * @param {String} selector - selector for which elements to associate with Views
@@ -630,45 +709,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
 			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
 			;
-		},
-	
-		/*
-	  * single element: createEl("div.class")
-	  * multiple elements: createEl(["div.class", "div.class"])
-	  */
-	
-		//TODO: implement emmet syntax creation, div.test>div.test2+ul.test3>li*5
-		createEl: function createEl(sel) {
-			var elem;
-			if ((typeof sel === 'undefined' ? 'undefined' : _typeof(sel)) === "object") {
-				for (var i = 0; i < sel.length; i++) {
-					if (elem) {
-						if (typeof sel[i] === "string") {
-							elem.appendChild(this.buildEl(sel[i]));
-						} else if (_typeof(sel[i]) === "object") {
-							elem.appendChild(sel[i]);
-						}
-					} else {
-						elem = this.buildEl(sel[i]);
-					}
-				}
-			} else {
-				elem = this.buildEl(sel);
-			}
-	
-			return elem;
-		},
-	
-		buildEl: function buildEl(s) {
-			var selector = s.split(".");
-			var el = document.createElement(selector[0]);
-			var cl = selector.splice(1);
-			if (cl.length > 0) {
-				for (var i = 0; i < cl.length; i++) {
-					_dom2.default.addClass(el, cl[i]);
-				}
-			}
-			return el;
 		},
 	
 		/**
@@ -758,6 +798,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				// move the document.body
 				move(val);
 				// do the animation unless its over
+				_log2.default.db(currentTime, duration);
 				if (currentTime < duration) {
 					requestAnimFrame(animateScroll);
 				}
@@ -1023,6 +1064,155 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 	};
 	exports.default = DOM;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var emmetUtils = {
+	
+		'#': function _(id) {
+			this.id = id;
+		},
+		'.': function _(cls) {
+			var list = this.getAttribute('class') || '';
+			list = list + (list ? ' ' : '') + cls;
+			if (list.length) {
+				this.setAttribute('class', list);
+			}
+		},
+		'[': function _(attrs) {
+			attrs = attrs.substr(0, attrs.length - 1).match(/(?:[^\s"]+|"[^"]*")+/g);
+			for (var i = 0, m = attrs.length; i < m; i++) {
+				var attr = attrs[i].split('=');
+				this.setAttribute(attr[0], (attr[1] || '').replace(/"/g, ''));
+			}
+		},
+		'>': function _(tag) {
+			if (tag) {
+				var el = document.createElement(tag);
+				this.appendChild(el);
+				return el;
+			}
+			return this;
+		},
+		'+': function _(tag, root) {
+			return emmetUtils['>'].call(this.parentNode || root, tag);
+		},
+		'*': function _(count) {
+			var parent = this.parentNode,
+			    els = [this];
+			for (var i = 1; i < count; i++) {
+				els.push(this.cloneNode(true));
+				parent.appendChild(els[i]);
+			}
+			//TODO: numbering for els
+			return els;
+		},
+		'^': function _(tag, root) {
+			return emmetUtils['+'].call(this.parentNode || root, tag, root);
+		},
+		'{': function _(text) {
+			this.appendChild(document.createTextNode(text.substr(0, text.length - 1)));
+		}
+	};
+	
+	var emmetRE = function emmetRE() {
+		var m = Object.keys(emmetUtils).join('');
+		var regex = '[a-z' + m + ']{0,1}(?:"[^"]*"|[^"' + m + ']){0,}';
+		return new RegExp(regex, 'g');
+	};
+	
+	var emmet = function emmet(code) {
+	
+		var parts = code.match(emmetRE()).filter(Boolean),
+		    root = document.createDocumentFragment(),
+		    el = document.createElement(parts[0]);
+		root.appendChild(el);
+		for (var i = 1, m = parts.length; i < m; i++) {
+			var part = parts[i];
+			el = emmetUtils[part.charAt(0)].call(el, part.substr(1), root) || el;
+		}
+		//add.insert(node, root, ref); NEEDS TO BE HANDLED
+		return root;
+	};
+	
+	exports.default = emmet;
+	
+	// (function(document, _) {
+	//     "use strict";
+
+	//     var add = _.fn.add;
+	//     add.create = function(node, code, ref) {
+	//         var parts = code.match(add.emmetRE()).filter(Boolean),
+	//             root = document.createDocumentFragment(),
+	//             el = document.createElement(parts[0]);
+	//         root.appendChild(el);
+	//         for (var i=1,m=parts.length; i<m; i++) {
+	//             var part = parts[i];
+	//             el = add.emmet[part.charAt(0)].call(el, part.substr(1), root) || el;
+	//         }
+	//         add.insert(node, root, ref);
+	//         return el;
+	//     };
+	//     add.emmetRE = function() {
+	//         var m = Object.keys(add.emmet).join('');
+	//         var regex = '[a-z'+m+']{0,1}(?:"[^"]*"|[^"'+m+']){0,}';
+	//         return new RegExp(regex, 'g');
+	//     };
+	//     add.emmet = {
+	//         '#': function(id) {
+	//             this.id = id;
+	//         },
+	//         '.': function(cls) {
+	//             var list = this.getAttribute('class') || '';
+	//             list = list + (list ? ' ' : '') + cls;
+	//             if (list.length) {
+	//                 this.setAttribute('class', list);
+	//             }
+	//         },
+	//         '[': function(attrs) {
+	//             attrs = attrs.substr(0, attrs.length-1).match(/(?:[^\s"]+|"[^"]*")+/g);
+	//             for (var i=0,m=attrs.length; i<m; i++) {
+	//                 var attr = attrs[i].split('=');
+	//                 this.setAttribute(attr[0], (attr[1] || '').replace(/"/g, ''));
+	//             }
+	//         },
+	//         '>': function(tag) {
+	//             if (tag) {
+	//                 var el = document.createElement(tag);
+	//                 this.appendChild(el);
+	//                 return el;
+	//             }
+	//             return this;
+	//         },
+	//         '+': function(tag, root) {
+	//             return add.emmet['>'].call(this.parentNode || root, tag);
+	//         },
+	//         '*': function(count) {
+	//             var parent = this.parentNode,
+	//                 els = [this];
+	//             for (var i=1; i<count; i++) {
+	//                 els.push(this.cloneNode(true));
+	//                 parent.appendChild(els[i]);
+	//             }
+	//             //TODO: numbering for els
+	//             return els;
+	//         },
+	//         '^': function(tag, root) {
+	//             return add.emmet['+'].call(this.parentNode || root, tag, root);
+	//         },
+	//         '{': function(text) {
+	//             this.appendChild(document.createTextNode(text.substr(0, text.length-1)));
+	//         }
+	//     };
+
+	// })(document, document.documentElement._);
 
 /***/ }
 /******/ ])
