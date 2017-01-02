@@ -35,7 +35,6 @@ class View {
 	}
 
 	delegateEvents() {
-
 		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
 		for (let prop in this.events) {
 			let eventSplit = prop.split(' ');
@@ -106,10 +105,12 @@ class View {
 	**/
 	render(mountPoint = null) {
 		if ( !this.visible ) {
-			if ( mountPoint ) DOM.append( DOM.find(mountPoint), this.el);
-			else if ( this.mountPoint ) DOM.append( DOM.find(this.mountPoint), this.el);
-			else throw new Error("Can't render! No mountpoint found!")
-			this.visible = true;
+			if ( mountPoint || this.mountPoint) {
+				let nodes = Array.prototype.slice.call(this.el.childNodes);
+				DOM.append( DOM.find(this.mountPoint), this.el);
+				this.el = nodes[0];
+				this.visible = true;
+			} else throw new Error("Can't render! No mountpoint found!")
 		}
 		return this;
 	}
