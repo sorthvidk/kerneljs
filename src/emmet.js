@@ -65,6 +65,6 @@ let emmet = function(code) {
 		el = emmetUtils[part.charAt(0)].call(el, part.substr(1), root) || el;
 	}
 	//add.insert(node, root, ref); NEEDS TO BE HANDLED
-	return root;
+	return Array.prototype.slice.call(root.childNodes)[0];
 }
 export default emmet;

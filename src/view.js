@@ -60,10 +60,12 @@ class View {
 				elements = DOM.find(this.el, target[0]);
 			}
 			else {
-				//wrapping this.el in array
-				elements = [target];
+				elements = [this.el];
 			}
-			elements.forEach((element)=>{
+
+
+			[...elements].map( (element) => {
+				Log.db("delegateEvents element",element);
 				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
 				Utils.on(element, eventName, eventHandler.bind(this));
 			});
@@ -114,9 +116,9 @@ class View {
 		if ( mountPoint ) this.mountPoint = mountPoint;
 		if ( !this.visible ) {
 			if ( this.mountPoint ) {
-				let nodes = Array.prototype.slice.call(this.el.childNodes);
+				//let nodes = Array.prototype.slice.call(this.el.childNodes);
 				DOM.append( DOM.find(this.mountPoint), this.el);
-				this.el = nodes[0];
+				//this.el = nodes[0];
 				this.visible = true;
 			} else throw new Error("Can't render! No mountpoint found!")
 		}

@@ -20,9 +20,7 @@ window.emitter = new Emitter();
 class Overlay extends View {
 
 	constructor(settings){
-		settings.events = {
-			'click': 'onClick'
-		};
+		
 		settings.displayName = 'Overlay';
 		settings.el = 'div.overlay.overlay--modal';
 		super(settings);
@@ -137,7 +135,7 @@ class Move extends View {
 
 		Object.assign(settings, {
 			events: {
-				'click .move': 'onClick'
+				'click': 'onClick'
 			},
 			displayName: 'Cookie-accept',
 			el: 'div.move[data-text="text"]',
@@ -172,7 +170,6 @@ class Table extends View {
 
 	constructor(settings) {
 		settings.events = {
-			'click .js--button': 'onClick',
 			'mouseenter': 'onMouseEnter'
 		}
 		settings.displayName = 'Table';
@@ -199,15 +196,14 @@ class CookieAccept extends View {
 
 		Object.assign(settings, {
 			events: {
-				'click .js--button': 'onClick',
-				'mouseenter': 'onMouseEnter'
+				//'click .js--button': 'onClick',
+				'click': 'onClick'
 			},
 			displayName: 'Cookie-accept',
 			el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
 			data: {
-				heading: 'heading text ',
-				text: 'cookie kasse'
-
+				heading: 'heading text  g f dsf dsf dsfdsf ',
+				text: 'cookie kasse sdf dsf sdf dsf'
 			},
 			mount: '.container'
 		})
@@ -218,12 +214,12 @@ class CookieAccept extends View {
 		Log.fn("onAction",this, e);
 	}
 	onMouseEnter(e) {
-		Log.fn('Table | onMouseEnter');
+		Log.fn('CookieAccept | onMouseEnter');
 	}
 	onClick(e) {
-		Log.db("cookie",Utils.cookie.get('cookietest'))
+		Log.db("CookieAccept | onClick",Utils.cookie.get('cookietest'))
 		e.preventDefault();
-		this.update()
+		this.update();
 	}
 }
 
