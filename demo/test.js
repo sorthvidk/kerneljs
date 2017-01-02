@@ -11,30 +11,27 @@ import * as motion from 'popmotion'; //https://popmotion.io/
 // import { Utils } from '../dist/kernel';
 // import { Log } from '../dist/kernel';
 
-import Emitter from 'es6-event-emitter';
-window.emitter = new Emitter();
-
-
-
-
 class Overlay extends View {
 
 	constructor(settings){
+
 		settings.events = {
 			'click':'onClick'
 		}
+
 		settings.displayName = 'Overlay';
 		settings.el = 'div.overlay.overlay--modal';
 		super(settings);
 
 		this.bodyRef = DOM.find('body');
 
-		View.emitter.on('modal:close', this.close.bind(this));		
+		View.emitter.on('modal:close', this.close.bind(this));
+
 	}
 
 	render(mountPoint) {
-		super.render(mountPoint);		
-		this.addClass('is-active');	
+		super.render(mountPoint);
+		this.addClass('is-active');
 	}
 
 	onClick(e) {
@@ -51,26 +48,26 @@ class Overlay extends View {
 }
 
 
-class ModalBox extends View {	
+class ModalBox extends View {
 
 	constructor(settings){
-		
+
 		settings.events = {
 			'click .js--close-modal': 'onClose'
 		};
 		settings.displayName = 'ModalBox';
-		settings.el = 'div.modal.'+settings.cssClasses+'>a.button.button--icon.has-icon.js--close-modal[href=""]>span.icon[data-text="close"]^div.modal__content.js--modal-content';		
+		settings.el = 'div.modal.'+settings.cssClasses+'>a.button.button--icon.has-icon.js--close-modal[href=""]>span.icon[data-text="close"]^div.modal__content.js--modal-content';
 		settings.data = {close:'×'};
 		super(settings);
 
 		this.content = settings.content;
 
-		this.overlay = new Overlay({ isFixed: true, fixBody: settings.fixBody });		
+		this.overlay = new Overlay({ isFixed: true, fixBody: settings.fixBody });
 
 		View.emitter.on('overlay:clicked', this.close.bind(this));
 	}
 	render() {
-		this.find('.js--modal-content')[0].innerHTML = this.content;		
+		this.find('.js--modal-content')[0].innerHTML = this.content;
 		this.overlay.render('body');
 		this.overlay.append(this.el);
 		View.emitter.trigger('modalbox:rendered', this);
@@ -141,7 +138,7 @@ class Move extends View {
 			events: {
 				'click': 'onClick'
 			},
-			displayName: 'Cookie-accept',
+			displayName: 'Move box',
 			el: 'div.move[data-text="text"]',
 			data: {
 				text: 'move box'
@@ -149,7 +146,6 @@ class Move extends View {
 			mount: 'body'
 		})
 		super(settings);
-		//Log.db(motion);
 		this.movement = motion.tween({
 			yoyo: 6,
 			values: {
@@ -163,6 +159,7 @@ class Move extends View {
 		    onFrame: (state) => {}, //console.log('x: ', state.x) },
 		    onStart: (e) => {} //console.log(e) }
 		})
+		View.emitter.on('view:update', (obj)=>{ Log.db(obj) });
 
 	}
 	onClick(e) {
@@ -184,7 +181,8 @@ class Table extends View {
 	}
 	onClick(e) {
 		Log.db("cookie",Utils.cookie.get('cookietest'))
-		e.preventDefault();		
+		e.preventDefault();
+
 	}
 	render() {
 		DOM.append( DOM.find('body'), this.el);
@@ -221,6 +219,8 @@ class CookieAccept extends View {
 	onClick(e) {
 		Log.db("CookieAccept | onClick",Utils.cookie.get('cookietest'))
 		e.preventDefault();
+		this.data.heading = 'New heading updated';
+		this.data.text = 'New text updated';
 		this.update();
 	}
 }

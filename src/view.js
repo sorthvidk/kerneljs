@@ -18,12 +18,14 @@ class View {
 
 	constructor({el = null, content = null, events = null, displayName = 'View', data = null, mount = null }) { //class constructor
 		this.instanceId = Utils.getCuid();
+		this.initUpdate = false;
 		this.events = events;
 		this.data = data;
 		this.mountPoint = mount;
 
 		if ( typeof el == "string" ) {
-			this.el = Emmet(el);
+			this.rootEl = Emmet(el);
+			this.el = this.rootEl.childNodes[0];
 		}
 		else if (el instanceof NodeList && el.length === 0 ) {
 			throw new Error("View el is empty NodeList!");
@@ -76,18 +78,30 @@ class View {
 	}
 
 	/**
-	* A "public" function, updates all data-text data attributes TODO: write an accutal update of existing textNodes..
+	* A "public" function, updates all data-text data attributes
 	*/
 	update() {
 		if(!this.data) return;
-		Object.keys(this.data).forEach((item)=>{
-			let el = DOM.find(this.el,'[data-text='+ item +']')[0];
+			Object.keys(this.data).forEach((item)=>{
+			let el = DOM.find(this.el.parentNode,'[data-text='+ item +']')[0];
 			if(el && this.data[item]) {
-				el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
+				let textNode = null;
+				el.childNodes.forEach((childNode) => {
+					if(childNode.nodeType===3) {
+						textNode = { exist: childNode.nodeType===3, el: childNode };
+					}
+				});
+				if(!textNode) {
+					el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
+				} else if(textNode && textNode.exist){
+					textNode.el.textContent = this.data[item];
+				} else {
+					throw new Error("Can't update view! somethings wrong in selecting textNodes!")
+				}
 			}
 		});
+		View.emitter.trigger('view:update', this);
 	}
-
 
 	/**
 	* A "private" function, which removes all event listeners
@@ -119,9 +133,7 @@ class View {
 		if ( mountPoint ) this.mountPoint = mountPoint;
 		if ( !this.visible ) {
 			if ( this.mountPoint ) {
-				//let nodes = Array.prototype.slice.call(this.el.childNodes);
 				DOM.append( DOM.find(this.mountPoint), this.el);
-				//this.el = nodes[0];
 				this.visible = true;
 			} else throw new Error("Can't render! No mountpoint found!")
 		}
