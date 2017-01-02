@@ -138,7 +138,7 @@ class Move extends View {
 			events: {
 				'click': 'onClick'
 			},
-			displayName: 'Cookie-accept',
+			displayName: 'Move box',
 			el: 'div.move[data-text="text"]',
 			data: {
 				text: 'move box'
@@ -146,7 +146,6 @@ class Move extends View {
 			mount: 'body'
 		})
 		super(settings);
-		//Log.db(motion);
 		this.movement = motion.tween({
 			yoyo: 6,
 			values: {

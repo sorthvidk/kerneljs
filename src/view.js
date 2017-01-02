@@ -83,7 +83,7 @@ class View {
 	update() {
 		if(!this.data) return;
 			Object.keys(this.data).forEach((item)=>{
-			let el = DOM.find(this.el,'[data-text='+ item +']')[0];
+			let el = DOM.find(this.el.parentNode,'[data-text='+ item +']')[0];
 			if(el && this.data[item]) {
 				let textNode = null;
 				el.childNodes.forEach((childNode) => {
