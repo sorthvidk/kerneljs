@@ -4,9 +4,6 @@ import DOM from './dom';
 import Emmet from './emmet';
 import { EventEmitter } from './event';
 
-//shims and polyfills
-//if(!NodeList.prototype.forEach) NodeList.prototype.forEach = Array.prototype.forEach;
-
 /**
  * $0 is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
  * @param {Element} el The associated DOMelement OR a string shorthand for generating an element
