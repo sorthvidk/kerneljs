@@ -7,7 +7,7 @@
     "test": "mocha test/index.test.js -w",
     "dev": "webpack-dev-server --inline -d",
     "build": "webpack",
-    "deploy": "git reset --hard; git pull; npm install; run build"
+    "deploy": "git reset --hard; git pull; npm install; npm run build"
   },
   "keywords": [
     "ES6",
