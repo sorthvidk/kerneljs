@@ -1,3 +1,6 @@
+//import shim from 'core-js';
+
+
 import Log from '../src/log';
 import View from '../src/view';
 import DOM from '../src/dom';

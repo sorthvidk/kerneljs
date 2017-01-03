@@ -4,6 +4,12 @@ KernelJS is sorthvid's main view class used for small progressive enhanced web p
 ## Documentation ##
 See [documentation](/documentation/js) for the project
 
+## Browser support ##
+Internet Explorer 10+
+Chrome latest
+Safari latest
+Firefox latest
+Opera latest
 
 ## Changelog ##
 * 2.0.1: fixed small bugs

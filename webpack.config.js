@@ -8,8 +8,8 @@ const WebpackDevServer = require("webpack-dev-server");
 
 module.exports = {
 	entry: {
-		'kernel': './index.js',
-		'test': './demo/test.js'
+		'kernel': ['babel-polyfill', './index.js'],
+		'test': ['babel-polyfill', './demo/test.js']
 
 	},
 	output: {
@@ -43,13 +43,7 @@ module.exports = {
 		format: 'html',
 		output: './documentation/js'
 	},
-	devtool: 'source-map',
-	devServer: {
-		historyApiFallback: true,
-		contentBase: './',
-		inline: true,
-		port : 3000
-	}
+	devtool: 'source-map'
 };
 
 

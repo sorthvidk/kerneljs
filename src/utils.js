@@ -53,12 +53,12 @@ const Utils = {
 
 	/**
 	 * A vanilla implementation of each
-	 **/
+	 */
 	each:function(target, fn) {
 		var elements;
 
 		if ( typeof target == "string" ) {
-			elements = this.find(target);
+			elements = DOM.find(target);
 		}
 		else if ( target.length || target instanceof NodeList ) {
 			elements = target;

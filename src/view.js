@@ -4,6 +4,8 @@ import DOM from './dom';
 import Emmet from './emmet';
 import { EventEmitter } from './event';
 
+//shims and polyfills
+//if(!NodeList.prototype.forEach) NodeList.prototype.forEach = Array.prototype.forEach;
 
 /**
  * $0 is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
@@ -86,7 +88,7 @@ class View {
 			let el = DOM.find(this.el.parentNode,'[data-text='+ item +']')[0];
 			if(el && this.data[item]) {
 				let textNode = null;
-				el.childNodes.forEach((childNode) => {
+				Utils.each(el.childNodes, (childNode) => {
 					if(childNode.nodeType===3) {
 						textNode = { exist: childNode.nodeType===3, el: childNode };
 					}
