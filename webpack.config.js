@@ -37,14 +37,16 @@ module.exports = {
 			}
 		]
 	},
-	documentation: {
-		entry: './src/*.js',
-		github: true,
-		format: 'html',
-		output: './documentation/js'
-	},
 	devtool: 'source-map'
 };
+
+
+// documentation: {
+// 		entry: './src/*.js',
+// 		github: true,
+// 		format: 'html',
+// 		output: './documentation/js'
+// 	},
 
 
 
