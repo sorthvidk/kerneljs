@@ -1,14 +1,5 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else {
-		var a = factory();
-		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-	}
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -58,27 +49,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Kernel = {
 		View: __webpack_require__(1),
-		Utils: __webpack_require__(5)
+		Utils: __webpack_require__(5),
+		Log: __webpack_require__(4)
 	};
-
 	module.exports = Kernel;
-
-	// !function (root, factory){
-	// 	'use strict';
-	// 	if (typeof exports === 'object') {
-	// 		// CommonJS module
-	// 		module.exports = factory;
-	// 	} else if (typeof define === 'function' && define.amd) {
-	// 		// AMD. Register as an anonymous module.
-	// 		define(function ()
-	// 		{
-	// 			return factory;
-	// 		});
-	// 	}
-	// }(window, {
-	// 	View: View,
-	// 	Utils: Utils
-	// });
 
 /***/ },
 /* 1 */
@@ -90,18 +64,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Utils = __webpack_require__(5),
 	    Log = __webpack_require__(4);
 
+	/**
+	 * View is the standard sorthvid content container class
+	 * @param el The associated DOMelement
+	 * @param settings The instance property values parsed into the constructor
+	 * @param events A json object containing the events for the instance
+	 */
+
 	var View = Generic.extend({
 
+		viewName: 'View',
+		className: '',
 		el: null,
 		settings: null,
 		events: null,
+		parent: null,
+		visible: true,
+		instanceId: true,
 
+		/**
+	  * @param settings The View parameters. Must contain an "el" DOMelement or a "selector" string, so a DOMelement can be associated
+	  * @constructor
+	  */
 		constructor: function constructor(settings) {
-
-			this.settings = settings || {};
-			if (this.settings.el) {
-				this.el = this.settings.el;
-			} else if (this.settings.selector) this.el = Utils.find(this.settings.selector);else this.el = document.createElement("div");
+			this.instanceId = Utils.getCuid();
+			this.settings = settings;
+			if (settings.el) {
+				this.el = settings.el;
+			} else if (settings.selector) {
+				this.el = Utils.find(settings.selector);
+			} else {
+				var selector = this.className.length > 0 ? 'div' + '.' + this.className : 'div';
+				this.el = Utils.createEl(selector);
+				if (settings.content) {
+					this.el.innerHTML = settings.content;
+				}
+			}
 
 			this.initialize();
 
@@ -110,24 +108,97 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		initialize: function initialize() {},
 
+		/**
+	  * A "private" function, which attaches event listeners to triggers specified in "events" field
+	  **/
 		delegateEvents: function delegateEvents() {
+			//Log.fn(this.viewName+" | delegateEvents")
 
 			for (var prop in this.events) {
-				var eventName = prop.split(' ')[0];
-				var eventSelector = prop.split(' ').slice(1);
+				var eventSplit = prop.split(' ');
+				var eventName = eventSplit[0];
+
+				// is the target specified with a selector, or is this.el implied?
+				var target = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
+
 				var eventHandler = this[this.events[prop]];
-				this.each(eventSelector, function (elem) {
-					this.on(elem, eventName, eventHandler.bind(this));
-				}.bind(this));
+
+				// is the target already an element or a selector? 
+				var elements;
+				if (typeof target == "string") {
+					elements = Utils.find(this.el, target);
+				} else if (target.length) {
+					elements = Utils.find(this.el, target[0]);
+				} else {
+					elements = [target];
+				}
+
+				var elementCount = elements.length;
+				for (var i = 0; i < elementCount; i++) {
+					this.on(elements[i], eventName, eventHandler.bind(this));
+				}
 			}
 		},
 
-		// DOM methods
-
-		find: function find(selector) {
-			return Utils.find(this.el, selector);
+		/**
+	  * Attaches an event listener
+	  * @param {Element} elem - the associated DOMelement
+	  * @param {String} eventName - the event string
+	  * @param {Function} eventHandler - the handler function
+	  */
+		on: function on(elem, eventName, eventHandler) {
+			Utils.on(elem, eventName, eventHandler);
 		},
 
+		/**
+	  * Removes an event listener
+	  * @param {Element} elem - the associated DOMelement
+	  * @param {String} eventName - the event string
+	  * @param {Function} eventHandler - the handler function
+	  */
+		off: function off(elem, eventName, eventHandler) {
+			Utils.off(elem, eventName, eventHandler);
+		},
+
+		/**
+	  * A "public" function, which removes the view's el from the DOM
+	  * Sets the View's visible property to false
+	  **/
+		remove: function remove() {
+			this.visible = false;
+			Utils.remove(this.el);
+		},
+
+		/**
+	  * A "public" function, which re-inserts the view's el into the DOM
+	  * Sets the View's visible property to true
+	  **/
+		render: function render() {
+			if (!this.visible) {
+				this.parent.appendChild(el);
+				this.visible = true;
+			}
+			return this;
+		},
+
+		append: function append(elem) {
+			Utils.append(this.el, elem);
+		},
+
+		/**
+	  * Wrappers for Utils DOM manipulation methods always using this.el as the origin
+	  **/
+		find: function find(selector) {
+			var result = Utils.find(this.el, selector);
+			if (result instanceof NodeList && result.length == 1) {
+				return result[0];
+			} else {
+				return result;
+			}
+		},
+		closestByClass: function closestByClass(className) {
+			return Utils.closestByClass(this.el, className);
+		},
 		addClass: function addClass(className) {
 			Utils.addClass(this.el, className);
 		},
@@ -142,27 +213,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		toggleClass: function toggleClass(className, test) {
 			Utils.toggleClass(this.el, className, test);
-		},
-
-		on: function on(elem, eventName, eventHandler) {
-			if (elem.addEventListener) {
-				elem.addEventListener(eventName, eventHandler);
-			} else {
-				elem.attachEvent('on' + eventName, function () {
-					handler.call(elem);
-				});
-			}
-		},
-
-		off: function off(elem, eventName, eventHandler) {
-			if (elem.removeEventListener) elem.removeEventListener(eventName, eventHandler);else elem.detachEvent('on' + eventName, eventHandler);
-		},
-
-		each: function each(selector, fn) {
-			var elements = Utils.find(this.el, selector);
-			for (var i = 0; i < elements.length; i++) {
-				fn(elements[i], i);
-			}
 		}
 	});
 
@@ -235,6 +285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Generic.prototype = {
 		extend: function extend(source, value) {
+			//console.log("arguments.length",arguments.length)
 			if (arguments.length > 1) {
 				// extending with a name/value pair
 				var ancestor = this[source];
@@ -247,9 +298,9 @@ return /******/ (function(modules) { // webpackBootstrap
 					value = function value() {
 						var previous = this.base || Generic.prototype.base;
 						this.base = ancestor;
-						var returnValue = method.apply(this, arguments);
+						//var returnValue = method.apply(this, arguments); //JPL: IE8 fails here
 						this.base = previous;
-						return returnValue;
+						//return returnValue; //JPL: IE8 fails here
 					};
 					// point to the underlying method
 					value.valueOf = function (type) {
@@ -623,34 +674,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	var _log,
 	    type = {
 		disabled: "disabled",
-		debug: "debug",
-		function: "function",
-		data: "data"
-	};
-	var allowedTypes = [type.debug, type.function, type.data];
+		debug: "debugging",
+		func: "function",
+		data: "raw data",
+		error: "!ERROR!"
+	},
+	    _db,
+	    _fn,
+	    _dt,
+	    _er;
+
+	var allowedTypes = [type.debug, type.func, type.data, type.error];
+
+	/**
+	 * Logging wrapper for debugging
+	 * @param {args} - A list of parameters, where the first parameter can be a type as specified in the "type" object 
+	 */
 
 	_log = function (undefined) {
 		var Log = Error;
 
 		Log.prototype.write = function (args) {
 			if (window.nolog) return false;
+
 			var typeFound = false;
 			for (var i = 0; i < allowedTypes.length; i++) {
 				if (allowedTypes[i] === args[0]) typeFound = true;
 			}
 
-			if (!typeFound) return false;
+			if (typeFound) args[0] = "[" + args[0] + "] || ";
 
 			var suffix = {
 				'@': this.lineNumber ? this.fileName + ':' + this.lineNumber + ':1' : extractLineNumberFromStack(this.stack)
 			};
 
-			args[0] = "[" + args[0] + "] ||";
 			args = args.concat([suffix]);
 
 			if (console) {
@@ -676,14 +736,32 @@ return /******/ (function(modules) { // webpackBootstrap
 		};
 
 		return function (params) {
-			var DEBUGMODE = true;
-
-			if ((typeof DEBUGMODE === "undefined" ? "undefined" : _typeof(DEBUGMODE)) === (typeof undefined === "undefined" ? "undefined" : _typeof(undefined)) || !DEBUGMODE) return;
 			Log().write(Array.prototype.slice.call(arguments, 0)); // turn into proper array
 		};
 	}();
 
-	module.exports = _log;
+	/**
+	 * Log is the standard sorthvid log wrapper. It exposes four methods:
+	 * db - "debug", used for signifying, that the logged text is a general debugging statement
+	 * dt - "data", used for signifying, that the logged text is raw data
+	 * fn - "function", used for signifying, that the text is logged when a function is invoked
+	 * log - the full function where type can be specified manually or left out
+	 */
+
+	_db = function _db(args) {
+		_log(type.debug, Array.prototype.slice.call(arguments, 0));
+	};
+	_dt = function _dt(args) {
+		_log(type.data, Array.prototype.slice.call(arguments, 0));
+	};
+	_fn = function _fn(args) {
+		_log(type.func, Array.prototype.slice.call(arguments, 0));
+	};
+	_er = function _er(args) {
+		_log(type.error, Array.prototype.slice.call(arguments, 0));
+	};
+
+	module.exports = { db: _db, dt: _dt, fn: _fn, er: _er, log: _log };
 
 /***/ },
 /* 5 */
@@ -696,35 +774,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Generic = __webpack_require__(2),
 	    Log = __webpack_require__(4);
 
-	var Utils = Generic.extend({
+	/**
+	 * Utils is a collection of sorthvid auxilliary methods
+	 */
+	var Utils = {
 
-		find: function find() {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
+		/*
+	  * DOM methods - common jQuery functions with vanilla JS
+	  */
 
+		find: function find(arg0, arg1) {
 			var result;
-			if (typeof arguments[0] === "string") {
-				result = document.querySelectorAll(arguments[0]);
+			if (typeof arg1 == "undefined") {
+				result = document.querySelectorAll(arg0);
 			} else {
-				result = arguments[0].querySelectorAll(arguments[1]);
+				result = arg0.querySelectorAll(arg1);
 			}
 			return result;
 		},
+		closestByClass: function closestByClass(el, className) {
+			return this.closest(el, function (_el) {
+				return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null;
+			});
+		},
+		closestByTag: function closestByTag(el, tagName) {
+			return this.closest(el, function (_el) {
+				return _el.tagName ? _el.tagName === tagName : null;
+			});
+		},
+		closestByID: function closestByID(el, id) {
+			return this.closest(el, function (_el) {
+				return _el.id ? _el.id === id : null;
+			});
+		},
+		closest: function closest(el, fn) {
+			if (!(el instanceof Element)) return false;
+			return el && (fn(el) ? el : this.closest(el.parentNode, fn));
+		},
+		append: function append(el, child) {
+			var elem = el;
+
+			if (typeof el == "string") {
+				elem = this.find(el);
+			}
+			if (elem.length) {
+				elem = elem[0];
+			}
+			elem.appendChild(child);
+		},
+
+		remove: function remove(el) {
+			var parent = el.parentNode;
+			try {
+				parent.removeChild(el);
+			} catch (e) {}
+		},
 
 		hasClass: function hasClass(el, className) {
+			if (className.length === 0) return false;
 			if (el.classList) return el.classList.contains(className);else return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
 		},
 
 		addClass: function addClass(el, className) {
+			if (className.length === 0) return false;
 			if (el.classList) el.classList.add(className);else el.className += ' ' + className;
 		},
 
 		removeClass: function removeClass(el, className) {
+			if (className.length === 0) return false;
 			if (el.classList) return el.classList.remove(className);else return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 		},
 
 		toggleClass: function toggleClass(el, className, test) {
+			if (className.length === 0) return false;
 			if (typeof test != "undefined") {
 				if (test) this.addClass(el, className);else this.removeClass(el, className);
 			} else {
@@ -741,13 +863,61 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 		},
 
+		/**
+	  * A vanilla implementation of each
+	  **/
+		each: function each(target, fn) {
+			var elements;
+
+			if (typeof target == "string") {
+				elements = this.find(target);
+			} else if (target.length || target instanceof NodeList) {
+				elements = target;
+			} else if (target instanceof Element) {
+				elements = [target];
+			}
+			if (elements.length === 0 || !(elements instanceof NodeList)) {
+				return false;
+			}
+
+			for (var i = 0; i < elements.length; i++) {
+				fn(elements[i], i);
+			}
+		},
+
+		/**
+	  * Attaches an event listener
+	  * @param {Element} elem - the associated DOMelement
+	  * @param {String} eventName - the event string
+	  * @param {Function} eventHandler - the handler function
+	  */
+		on: function on(elem, eventName, eventHandler) {
+			if (elem.addEventListener) {
+				elem.addEventListener(eventName, eventHandler);
+			} else {
+				elem.attachEvent('on' + eventName, function () {
+					eventHandler.call(elem);
+				});
+			}
+		},
+
+		/**
+	  * Removes an event listener
+	  * @param {Element} elem - the associated DOMelement
+	  * @param {String} eventName - the event string
+	  * @param {Function} eventHandler - the handler function
+	  */
+		off: function off(elem, eventName, eventHandler) {
+			if (elem.removeEventListener) elem.removeEventListener(eventName, eventHandler);else elem.detachEvent('on' + eventName, eventHandler);
+		},
+
+		/**
+	  * Checks if the element is within the viewport
+	  * @param {Element} el - the DOMelement in question
+	  */
 		isElementInViewport: function isElementInViewport(el) {
 			if (!el) {
 				return;
-			}
-			//special bonus for those using jQuery
-			if (typeof jQuery === "function" && el instanceof jQuery) {
-				el = el[0];
 			}
 			var rect = el.getBoundingClientRect();
 			return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
@@ -758,7 +928,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		/*
 	  * single element: createEl("div.class")
 	  * multiple elements: createEl(["div.class", "div.class"])
-	  *
 	  */
 		createEl: function createEl(sel) {
 			var elem;
@@ -771,32 +940,35 @@ return /******/ (function(modules) { // webpackBootstrap
 							elem.appendChild(sel[i]);
 						}
 					} else {
-						elem = build(sel[i]);
+						elem = this.buildEl(sel[i]);
 					}
 				}
 			} else if ((typeof sel === 'undefined' ? 'undefined' : _typeof(sel)) === "object") {} else {
-				elem = build(sel);
+				elem = this.buildEl(sel);
 			}
 
-			function build(s) {
-				var selector = s.split(".");
-				var el = document.createElement(selector[0]);
-				var cl = selector[1] ? selector[1].split(" ") : 0;
-				if (cl.length > 0) {
-					for (var i = 0; i < cl.length; i++) {
-						$(el).addClass(cl[i]);
-					}
-				}
-				return el;
-			}
 			return elem;
 		},
 
+		buildEl: function buildEl(s) {
+			var selector = s.split(".");
+			var el = document.createElement(selector[0]);
+			var cl = selector[1] ? selector[1].split(" ") : 0;
+			if (cl.length > 0) {
+				for (var i = 0; i < cl.length; i++) {
+					this.addClass(el, cl[i]);
+				}
+			}
+			return el;
+		},
+
+		/**
+	  * Vanilla way of sniffing accordion content height
+	  * @param {Element} elem - the DOMelement in question
+	  * @param {String} className - the class to add, when the accordion is ready
+	  */
 		getAccordionHeight: function getAccordionHeight(elem, className) {
 			var height;
-			if (elem instanceof jQuery) {
-				elem = elem[0];
-			}
 			this.removeClass(elem, className);
 			this.addClass(elem, "is--calculation-height");
 			height = elem.getClientRects() ? elem.getClientRects()[0].height : elem.offsetHeight;
@@ -805,6 +977,11 @@ return /******/ (function(modules) { // webpackBootstrap
 			return height;
 		},
 
+		/**
+	  * Get url parameter
+	  * @param {String} name - the variable name
+	  * @param {String} url - a way to override the default root of the url parameter
+	  */
 		getUrlParms: function getUrlParms(name, url) {
 			var url = url || window.location.search;
 			var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -813,6 +990,11 @@ return /******/ (function(modules) { // webpackBootstrap
 			return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		},
 
+		/**
+	  * Vanilla site scroll animation
+	  * @param {Element} elem - the DOMelement to scroll to
+	  * @param {Number} scrollDuration - duration of the animation
+	  */
 		scrollTo: function scrollTo(elem, scrollDuration) {
 			var offset = elem.getClientRects()[0],
 			    scrollStep = offset.top > window.scrollY ? -window.scrollY / (scrollDuration / 15) : window.scrollY / (scrollDuration / 15),
@@ -902,21 +1084,39 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		screenSize: function screenSize(size) {
 			var sizes = {
-				"sScreen": 567,
-				"mScreen": 768,
-				"lScreen": 1024,
-				"xlScreen": 1200,
-				"xxlScreen": 1350,
-				"xxxlScreen": 1500,
-				"headerTools": 1800
+				"xsScreen": 567,
+				"sScreen": 768,
+				"mScreen": 1024,
+				"lScreen": 1152,
+				"xlScreen": 1280,
+				"xxlScreen": 1440,
+				"xxxlScreen": 1680
 			};
 			return sizes[size];
-		}
-	});
+		},
 
-	module.exports = new Utils();
+		showElement: function showElement(element) {
+			try {
+				element.style.display = 'block';
+				setTimeout(function () {
+					this.addClass(element, 'is-active');
+				}.bind(this), 50);
+			} catch (error) {
+				Log.err("showElement, element=" + element);
+			}
+		},
+
+		hideElement: function hideElement(element) {
+			try {
+				element.style.display = 'none';
+				this.removeClass(element, 'is-active');
+			} catch (error) {
+				Log.err("hideElement, element=" + element);
+			}
+		}
+	};
+
+	module.exports = Utils;
 
 /***/ }
-/******/ ])
-});
-;
+/******/ ]);

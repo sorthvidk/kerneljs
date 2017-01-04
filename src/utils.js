@@ -6,7 +6,7 @@ var Generic = require('../src/generic'),
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
-var Utils = Generic.extend({
+var Utils = {
 
 	/*
 	 * DOM methods - common jQuery functions with vanilla JS
@@ -344,7 +344,29 @@ var Utils = Generic.extend({
 			"xxxlScreen": 1680
 		}
 		return sizes[size];
-	}
-});
+	},
 
-module.exports = new Utils();
+	showElement:function(element) {
+		try {
+			element.style.display = 'block';
+			setTimeout(function(){
+				this.addClass(element, 'is-active');
+			}.bind(this),50);
+		}
+		catch(error) {
+			Log.err("showElement, element="+element);
+		}
+	},
+	
+	hideElement:function(element) {
+		try {
+			element.style.display = 'none';
+			this.removeClass(element, 'is-active');
+			}
+		catch(error) {
+			Log.err("hideElement, element="+element);
+		}
+	}
+};
+
+module.exports = Utils;
