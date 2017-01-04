@@ -1,6 +1,6 @@
-var Kernel =  {
-	View: require('./src/view'),
-	Utils: require('./src/utils'),
-	Log: require('./src/log')
-}
-module.exports = Kernel;
+import View from './src/view';
+import DOM from './src/dom';
+import Utils from './src/utils';
+import Log from './src/log';
+
+export { Log, View, DOM, Utils };

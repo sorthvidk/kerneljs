@@ -1,166 +1,186 @@
-var Generic = require('../src/generic'),
-	Utils = require('../src/utils'),
-	Log = require('../src/log');
-
+import Log from './log';
+import Utils from './utils';
+import DOM from './dom';
+import Emmet from './emmet';
+import { EventEmitter } from './event';
 
 /**
- * View is the standard sorthvid content container class
- * @param el The associated DOMelement
- * @param settings The instance property values parsed into the constructor
- * @param events A json object containing the events for the instance
+ * $0 is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
+ * @param {Element} el The associated DOMelement OR a string shorthand for generating an element
+ * @param {String} content Optional string HTML content to be injected into a generated element
+ * @param {Object} events A json object containing the events for the instance
+ * @param {String} displayName A huma readable name for the View
+ * @param {Object} data A json object containing text strings to be added to markup with data attributes data-text=key
+ * @param {String} mount if a mount is provided the view automatically mount to the given point
  */
+class View {
 
-var View = Generic.extend({
-  	
-  	viewName:'View',
-  	className:'',
-  	el:null,
-  	settings:null,
-  	events:null,
-  	parent:null,
-  	visible:true,
-  	instanceId:true,
-
-	/**
-	 * @param settings The View parameters. Must contain an "el" DOMelement or a "selector" string, so a DOMelement can be associated
-	 * @constructor
-	 */
-	constructor: function(settings) {
+	constructor({el = null, content = null, events = null, displayName = 'View', data = null, mount = null }) { //class constructor
 		this.instanceId = Utils.getCuid();
-		this.settings = settings;
-		if ( settings.el ) {
-			this.el = settings.el;
+		this.initUpdate = false;
+		this.events = events;
+		this.data = data;
+		this.mountPoint = mount;
+
+		if ( typeof el == "string" ) {
+			this.rootEl = Emmet(el);
+			this.el = this.rootEl.childNodes[0];
 		}
-		else if ( settings.selector ) {
-			this.el = Utils.find(settings.selector);
+		else if (el instanceof NodeList && el.length === 0 ) {
+			throw new Error("View el is empty NodeList!");
 		}
 		else {
-			var selector = this.className.length > 0 ? 'div'+'.'+this.className : 'div' ;
-			this.el = Utils.createEl(selector);
-			if ( settings.content ) {
-				this.el.innerHTML = settings.content;
-			}
+			this.el = DOM.elementProxy(el);
 		}
-
-
-		this.initialize();
-
+		this.eventListeners = [];
 		this.delegateEvents();
-	},
-
-	initialize: function() {
-	},
+		this.update();
+		Log.fn(displayName+' ' + this.instanceId + ' created');
+		if(this.mountPoint) {
+			this.render();
+		}
+	}
 
 	/**
-	 * A "private" function, which attaches event listeners to triggers specified in "events" field
-	 **/
-	delegateEvents:function() {
-		//Log.fn(this.viewName+" | delegateEvents")
-
-		for (var prop in this.events) {
-			var eventSplit = prop.split(' ');
-			var eventName = eventSplit[0];
+	* delegating HTML events
+	*/
+	delegateEvents() {
+		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
+		for (let prop in this.events) {
+			let eventSplit = prop.split(' ');
+			let eventName = eventSplit[0];
 
 			// is the target specified with a selector, or is this.el implied?
-			var target = eventSplit.length > 1 ? prop.split(' ').slice(1) : this.el;
-			
-			var eventHandler = this[this.events[prop]];
+			let target = eventSplit.length > 1 ? eventSplit[1] : this.el;
 
-			// is the target already an element or a selector?  
-			var elements;
+			let eventHandler = this[this.events[prop]];
+
+			// is the target already an element or a selector?
+			let elements;
 			if ( typeof target == "string" ){
-				elements = Utils.find(this.el, target);
-			} 
-			else if ( target.length ) {
-				elements = Utils.find(this.el, target[0]);
+				elements = DOM.find(this.el, target);
+			}
+			else if ( target.length && target != this.el ) {
+				elements = DOM.find(this.el, target[0]);
 			}
 			else {
-				elements = [target];
+				elements = [this.el];
 			}
 
-			var elementCount = elements.length;
-			for ( var i=0; i<elementCount; i++) {
-				this.on(elements[i], eventName, eventHandler.bind(this));
-			}
+
+			[...elements].map( (element) => {
+				Log.db("delegateEvents element",element);
+				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
+				Utils.on(element, eventName, eventHandler.bind(this));
+			});
 		}
-	},
+	}
 
 	/**
-	 * Attaches an event listener
-	 * @param {Element} elem - the associated DOMelement
-	 * @param {String} eventName - the event string
-	 * @param {Function} eventHandler - the handler function
-	 */
-	on: function(elem, eventName, eventHandler) {
-		Utils.on(elem, eventName, eventHandler);
-	},
+	* A "public" function, updates all data-text data attributes
+	*/
+	update() {
+		if(!this.data) return;
+			Object.keys(this.data).forEach((item)=>{
+			let el = DOM.find(this.el.parentNode,'[data-text='+ item +']')[0];
+			if(el && this.data[item]) {
+				let textNode = null;
+				Utils.each(el.childNodes, (childNode) => {
+					if(childNode.nodeType===3) {
+						textNode = { exist: childNode.nodeType===3, el: childNode };
+					}
+				});
+				if(!textNode) {
+					el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
+				} else if(textNode && textNode.exist){
+					textNode.el.textContent = this.data[item];
+				} else {
+					throw new Error("Can't update view! somethings wrong in selecting textNodes!")
+				}
+			}
+		});
+		View.emitter.trigger('view:update', this);
+	}
 
 	/**
-	 * Removes an event listener
-	 * @param {Element} elem - the associated DOMelement
-	 * @param {String} eventName - the event string
-	 * @param {Function} eventHandler - the handler function
-	 */
-	off: function(elem, eventName, eventHandler) {
-		Utils.off(elem, eventName, eventHandler);
-	},
-
-
-	/**
-	 * A "public" function, which removes the view's el from the DOM
-	 * Sets the View's visible property to false
-	 **/
-	remove: function() {
-		this.visible = false;
-		Utils.remove(this.el);
-	},
+	* A "private" function, which removes all event listeners
+	*/
+	undelegateEvents() {
+		this.eventListeners.forEach((listener)=>{
+			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
+		});
+		return true;
+	}
 
 	/**
-	 * A "public" function, which re-inserts the view's el into the DOM
-	 * Sets the View's visible property to true
-	 **/
-	render: function() {
+	* A "public" function, which removes the view's el from the DOM
+	* Sets the View's visible property to false
+	*/
+	remove() {
+		if ( this.undelegateEvents() ) {
+			this.visible = false;
+			DOM.remove(this.el);
+		}
+	}
+
+	/**
+	* A "public" function, which re-inserts the view's el into the DOM
+	* Sets the View's visible property to true
+	* @param {String} mountPoint string containing a valid class or id selector
+	*/
+	render(mountPoint = null) {
+		if ( mountPoint ) this.mountPoint = mountPoint;
 		if ( !this.visible ) {
-			this.parent.appendChild(el);
-			this.visible = true;
+			if ( this.mountPoint ) {
+				DOM.append( DOM.find(this.mountPoint), this.el);
+				this.visible = true;
+			} else throw new Error("Can't render! No mountpoint found!")
 		}
 		return this;
-	},
-
-	append:function(elem) {
-		Utils.append(this.el, elem);		
-	},
+	}
+	/**
+	* A "public" function, which append a given elem/docFragtion into this.el
+	*/
+	append(elem) {
+		DOM.append(this.el, elem);
+	}
 
 	/**
-	 * Wrappers for Utils DOM manipulation methods always using this.el as the origin
-	 **/
-  	find: function(selector){
-  		var result = Utils.find(this.el, selector);
-  		if ( result instanceof NodeList && result.length == 1) {
-			return result[0];
-		}
-		else {
-			return result;
-		}
-	},
-	closestByClass: function(className){
-		return Utils.closestByClass(this.el, className);
-	},
-	addClass: function(className) {
-		Utils.addClass(this.el, className);
-	},
-
-	hasClass: function(className) {
-		return Utils.hasClass(this.el, className);
-	},
-
-	removeClass: function(className) {
-		Utils.removeClass(this.el, className);
-	},
-
-	toggleClass: function(className, test) {
-		Utils.toggleClass(this.el, className, test);
+	* Wrappers for DOM manipulation methods always using this.el as the origin
+	*/
+  	find(selector) {
+  		var result = DOM.find(this.el, selector);
+  		return result;
 	}
-});
 
-module.exports = View;
+	addClass(className) {
+		DOM.addClass(this.el, className);
+		return this;
+	}
+
+	hasClass(className) {
+		return DOM.hasClass(this.el, className);
+	}
+
+	removeClass(className) {
+		DOM.removeClass(this.el, className);
+		return this;
+	}
+
+	toggleClass(className, test) {
+		DOM.toggleClass(this.el, className, test);
+	}
+
+	closest(selector) {
+		return DOM.closest(this.el, selector);
+	}
+
+	static get emitter() {
+		return EventEmitter;
+	}
+
+}
+
+
+
+export default View;

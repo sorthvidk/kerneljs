@@ -1,120 +1,69 @@
-var Generic = require('../src/generic'),
-	Log = require('../src/log');
+import Log from './log';
+import DOM from './dom';
+import View from './view';
 
+
+Math.easeInOutQuad = function (t, b, c, d) {
+  t /= d/2;
+  if (t < 1) {
+	return c/2*t*t + b
+  }
+  t--;
+  return -c/2 * (t*(t-2) - 1) + b;
+};
+
+Math.easeInCubic = function(t, b, c, d) {
+  var tc = (t/=d)*t*t;
+  return b+c*(tc);
+};
+
+Math.inOutQuintic = function(t, b, c, d) {
+  var ts = (t/=d)*t,
+  tc = ts*t;
+  return b+c*(6*tc*ts + -15*ts*ts + 10*tc);
+};
+
+Math.easeOutExpo = function (t, b, c, d) {
+	return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
+};
 
 
 /**
  * Utils is a collection of sorthvid auxilliary methods
  */
-var Utils = {
+const Utils = {
 
-	/*
-	 * DOM methods - common jQuery functions with vanilla JS
+	/**
+	 * Creates all Views for a chosen Class
+	 * @param {String} selector - selector for which elements to associate with Views
+	 * @param {Class} viewClass - a reference to the class from which Views will be instantiated
 	 */
-
-	find: function(arg0, arg1){
-		var result;
-		if ( typeof arg1 == "undefined" ) {
-			result = document.querySelectorAll(arg0);
-		}
-		else {
-			result = arg0.querySelectorAll(arg1);
-		}		
-		return result;		
-	},
-	closestByClass: function(el, className) {
-		return this.closest(el, function(_el){ return typeof _el.className == "string" ? _el.className.indexOf(className) > -1 : null; 
+	viewFactory: function(selector, viewClass, settings) {
+		var elements = DOM.find(selector);
+		var views = [];
+		[...elements].map((el) => {
+			let defaults = {el:el};
+			Object.assign(defaults,settings);
+			Log.db("defaults",defaults)
+			views.push( new viewClass( defaults ) );
 		});
-	},
-	closestByTag: function(el, tagName) {
-		return this.closest(el, function(_el){ return _el.tagName ? _el.tagName === tagName : null; });
-	},
-	closestByID: function(el, id) {
-		return this.closest(el, function(_el){ return _el.id ? _el.id === id : null; });
-	},
-	closest: function(el, fn) {
-		if ( !(el instanceof Element)) return false;
-		return el && (fn(el) ? el : this.closest(el.parentNode, fn));
-	},
-	append:function(el,child){
-		var elem = el;
-
-		if ( typeof el == "string") {
-			elem = this.find(el);
-		}
-		if (elem.length) {
-			elem = elem[0];
-		}
-		elem.appendChild(child);
-	},
-
-	remove:function(el) {
-		var parent = el.parentNode;
-		try {parent.removeChild(el);}
-		catch (e){  }
-	},
-
-	hasClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			return el.classList.contains(className);
-		else
-			return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-	},
-
-	addClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			el.classList.add(className);
-		else
-			el.className += ' ' + className;
-	},
-
-	removeClass: function(el, className) {
-		if (className.length === 0) return false;
-		if (el.classList)
-			return el.classList.remove(className);
-		else
-			return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-	},
-
-	toggleClass: function(el, className, test) {
-		if (className.length === 0) return false;
-		if (typeof test != "undefined") {
-			if ( test ) this.addClass(el, className);
-			else this.removeClass(el, className);
-		}
-		else {
-			if (el.classList) {
-				el.classList.toggle(className);
-			} else {
-				var classes = el.className.split(' ');
-				var existingIndex = classes.indexOf(className);
-
-				if (existingIndex >= 0)
-					classes.splice(existingIndex, 1);
-				else
-					classes.push(className);
-
-				el.className = classes.join(' ');
-			}
-		}
+		return views;
 	},
 
 
 	/**
 	 * A vanilla implementation of each
-	 **/
+	 */
 	each:function(target, fn) {
 		var elements;
-		
+
 		if ( typeof target == "string" ) {
-			elements = this.find(target);
+			elements = DOM.find(target);
 		}
 		else if ( target.length || target instanceof NodeList ) {
 			elements = target;
 		}
-		else if ( target instanceof Element ) {			
+		else if ( target instanceof Element ) {
 			elements = [target];
 		}
 		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
@@ -132,7 +81,8 @@ var Utils = {
 	 * @param {String} eventName - the event string
 	 * @param {Function} eventHandler - the handler function
 	 */
-	on: function(elem, eventName, eventHandler) {
+	on: function(el, eventName, eventHandler) {
+		var elem = el instanceof View ? el.el : el;
 		if (elem.addEventListener) {
 			elem.addEventListener(eventName, eventHandler);
 		} else {
@@ -148,11 +98,12 @@ var Utils = {
 	 * @param {String} eventName - the event string
 	 * @param {Function} eventHandler - the handler function
 	 */
-	off: function(elem, eventName, eventHandler) {
+	off: function(el, eventName, eventHandler) {
+		var elem = el instanceof View ? el.el : el;
 		if (elem.removeEventListener)
 			elem.removeEventListener(eventName, eventHandler);
 		else
-			elem.detachEvent('on' + eventName, eventHandler);		
+			elem.detachEvent('on' + eventName, eventHandler);
 	},
 
 
@@ -161,10 +112,11 @@ var Utils = {
 	 * @param {Element} el - the DOMelement in question
 	 */
 	isElementInViewport: function(el) {
-		if (!el) {
+		var elem = el instanceof View ? el.el : el;
+		if (!elem) {
 			return
 		}
-		var rect = el.getBoundingClientRect();
+		var rect = elem.getBoundingClientRect();
 		return (
 			rect.top >= 0 &&
 			rect.left >= 0 &&
@@ -173,58 +125,42 @@ var Utils = {
 		);
 	},
 
-	/*
-	 * single element: createEl("div.class")
-	 * multiple elements: createEl(["div.class", "div.class"])
-	 */
-	createEl: function(sel) {
-		var elem;
-		if (typeof sel === "object") {
-			for (var i = 0; i < sel.length; i++) {
-				if (elem) {
-					if (typeof sel[i] === "string") {
-						elem.appendChild(build(sel[i]));
-					} else if (typeof sel[i] === "object") {
-						elem.appendChild(sel[i]);
-					}
-				} else {
-					elem = this.buildEl(sel[i]);
-				}
-			}
-		} else if (typeof sel === "object") {
-
-		} else {
-			elem = this.buildEl(sel);
-		}
-		
-		return elem;
-	},
-
-	buildEl: function(s) {
-		var selector = s.split(".");
-		var el = document.createElement(selector[0]);
-		var cl = selector[1] ? selector[1].split(" ") : 0;
-		if (cl.length > 0) {
-			for (var i = 0; i < cl.length; i++) {
-				this.addClass(el, cl[i]);
-			}
-		}
-		return el;
-	},
-
 	/**
-	 * Vanilla way of sniffing accordion content height
+	 * Vanilla way of sniffing element height
 	 * @param {Element} elem - the DOMelement in question
-	 * @param {String} className - the class to add, when the accordion is ready
 	 */
-	getAccordionHeight: function(elem, className) {
-		var height;
-		this.removeClass(elem, className);
-		this.addClass(elem, "is--calculation-height");
-		height = elem.getClientRects() ? elem.getClientRects()[0].height : elem.offsetHeight;
-		this.removeClass(elem, "is--calculation-height");
-		this.addClass(elem, className);
-		return height;
+	getHeight: function(el) {
+		var elem = el instanceof View ? el.el : el;
+
+		var style = window.getComputedStyle(elem),
+			savedProps = {
+				display: style.display,
+				position: style.position,
+				visibility: style.visibility,
+				maxHeight: style.maxHeight.replace('px', '').replace('%', '')
+			},
+			wantedHeight = 0;
+
+
+		// if its not hidden we just return normal height
+		if(savedProps.display !== 'none' && savedProps.maxHeight !== '0') {
+			return elem.offsetHeight;
+		}
+
+		// the element is hidden so:
+		// making the el block so we can meassure its height but still be hidden
+		elem.style.position   = 'absolute';
+		elem.style.visibility = 'hidden';
+		elem.style.display    = 'block';
+
+		wantedHeight = elem.offsetHeight;
+
+		// reverting to the original values
+		elem.style.display    = savedProps.display;
+		elem.style.position   = savedProps.position;
+		elem.style.visibility = savedProps.visibility;
+
+		return wantedHeight;
 	},
 
 
@@ -232,7 +168,7 @@ var Utils = {
 	 * Get url parameter
 	 * @param {String} name - the variable name
 	 * @param {String} url - a way to override the default root of the url parameter
-	 */	
+	 */
 	getUrlParms: function(name, url) {
 		var url = url || window.location.search;
 		var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -246,29 +182,56 @@ var Utils = {
 	 * @param {Element} elem - the DOMelement to scroll to
 	 * @param {Number} scrollDuration - duration of the animation
 	 */
-	scrollTo: function(elem, scrollDuration) {
-		var offset = elem.getClientRects()[0],
-			scrollStep = offset.top > window.scrollY ? -window.scrollY / (scrollDuration / 15) : window.scrollY / (scrollDuration / 15),
-			scrollInterval = setInterval(function() {
-				if (elem.getClientRects()[0].top > window.innerHeight / 2) {
-					window.scrollBy(0, scrollStep);
-				} else {
-					clearInterval(scrollInterval);
-				}
-			}, 15);
+	scrollTo: function(el, scrollDuration) {
+		var elem = el instanceof View ? el.el : el;
+		// because it's so fucking difficult to detect the scrolling element, just move them all
+		function move(amount) {
+			document.documentElement.scrollTop = amount;
+			document.body.parentNode.scrollTop = amount;
+			document.body.scrollTop = amount;
+		}
+		function position() {
+			return document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop;
+		}
+
+		var requestAnimFrame = (function(){
+			return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
+		})();
+
+		var start = position(),
+			change = elem.getClientRects()[0].top - start,
+			currentTime = 0,
+			increment = 20,
+			duration = (typeof(scrollDuration) === 'undefined') ? 500 : scrollDuration;
+
+		var animateScroll = function() {
+			// increment the time
+			currentTime += increment;
+			// find the value with the quadratic in-out easing function
+			var val = Math.easeOutExpo(currentTime, start, change, duration);
+			// move the document.body
+			move(val);
+			// do the animation unless its over
+			//Log.db(currentTime,duration)
+			if (currentTime < duration) {
+				requestAnimFrame(animateScroll);
+			}
+		}.bind(this);
+
+		animateScroll();
 	},
 
-	cumulativeOffset: function(element) {
-		if (element instanceof jQuery) {
-			element = element[0];
-		}
+	cumulativeOffset: function(el) {
+		var elem = el instanceof View ? el.el : el;
+
 		var top = 0,
 			left = 0;
+
 		do {
-			top += element.offsetTop || 0;
-			left += element.offsetLeft || 0;
-			element = element.offsetParent;
-		} while (element);
+			top += elem.offsetTop || 0;
+			left += elem.offsetLeft || 0;
+			elem = elem.offsetParent;
+		} while (elem);
 
 		return {
 			top: top,
@@ -291,14 +254,15 @@ var Utils = {
 				return unescape(document.cookie.substring(start, end));
 			}
 		},
-		set: function(cookieName, expireDays, cookieValue, domain, secure) {
+
+		set: function({cookieName = null, cookieValue = null, expireDays = 30}) {
 			var expireDate = new Date();
 			cookieValue = cookieValue || 1;
-			domain = domain || settings.domain;
 			expireDate.setDate(expireDate.getDate() + expireDays);
 			var cookieValue = escape(cookieValue) + ((expireDays == null) ? "" : "; path=/; expires=" + expireDate.toUTCString());
 			document.cookie = cookieName + "=" + cookieValue;
 		},
+
 		setMinutes: function(cookieName, expireMinutes, cookieValue, domain, secure) {
 			var expireDate = new Date();
 			cookieValue = cookieValue || 1;
@@ -346,27 +310,6 @@ var Utils = {
 		return sizes[size];
 	},
 
-	showElement:function(element) {
-		try {
-			element.style.display = 'block';
-			setTimeout(function(){
-				this.addClass(element, 'is-active');
-			}.bind(this),50);
-		}
-		catch(error) {
-			Log.err("showElement, element="+element);
-		}
-	},
-	
-	hideElement:function(element) {
-		try {
-			element.style.display = 'none';
-			this.removeClass(element, 'is-active');
-			}
-		catch(error) {
-			Log.err("hideElement, element="+element);
-		}
-	}
 };
 
-module.exports = Utils;
+export default Utils;

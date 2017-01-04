@@ -1,4 +1,6 @@
 /node_modules
+/prototype
+/styleguide
 .sass-cache
 npm-debug.lo*
 .DS_Store
