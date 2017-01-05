@@ -8375,7 +8375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					var el = _dom2.default.find(_this2.el.parentNode, '[data-text=' + item + ']')[0];
 					if (el && _this2.data[item]) {
 						var textNode = null;
-						el.childNodes.forEach(function (childNode) {
+						_utils2.default.each(el.childNodes, function (childNode) {
 							if (childNode.nodeType === 3) {
 								textNode = { exist: childNode.nodeType === 3, el: childNode };
 							}

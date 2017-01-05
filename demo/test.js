@@ -195,7 +195,6 @@ class CookieAccept extends View {
 //TESTS
 
 var cookie = new CookieAccept();
-var move = new Move();
 
 
 let table1 = new Table({el: DOM.find('#table') });
