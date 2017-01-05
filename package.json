@@ -1,7 +1,7 @@
 {
   "name": "kerneljs",
-  "version": "1.0.0",
-  "description": "Very slim ES6 javascript framework. Based around a View class.",
+  "version": "2.0.2",
+  "description": "Very slim ES6 javascript framework. Based around a View class. Kerneljs is aimed at progressive enhanced web development",
   "main": "dist/kernel.js",
   "scripts": {
     "test": "mocha test/index.test.js -w",
@@ -12,7 +12,8 @@
   "keywords": [
     "ES6",
     "simple",
-    "extendable"
+    "extendable",
+    "progressive enhancement"
   ],
   "author": "sorthvid",
   "license": "ISC",
