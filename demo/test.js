@@ -7,8 +7,6 @@ import DOM from '../src/dom';
 import Utils from '../src/utils';
 import Emmet from '../src/emmet';
 
-import * as motion from 'popmotion'; //https://popmotion.io/
-
 // import { View } from '../dist/kernel';
 // import { DOM } from '../dist/kernel';
 // import { Utils } from '../dist/kernel';
@@ -132,43 +130,6 @@ class Box extends View {
 }
 
 let boxes = Utils.viewFactory('.box', Box, {displayName:'Lars'});
-
-class Move extends View {
-	constructor(settings) {
-		settings = settings || {};
-
-		Object.assign(settings, {
-			events: {
-				'click': 'onClick'
-			},
-			displayName: 'Move box',
-			el: 'div.move[data-text="text"]',
-			data: {
-				text: 'move box'
-			},
-			mount: 'body'
-		})
-		super(settings);
-		this.movement = motion.tween({
-			yoyo: 6,
-			values: {
-		        x: {
-		            to: -200
-		        },
-		        y: {
-		        	to: -200
-		        }
-		    },
-		    onFrame: (state) => {}, //console.log('x: ', state.x) },
-		    onStart: (e) => {} //console.log(e) }
-		})
-		View.emitter.on('view:update', (obj)=>{ Log.db(obj) });
-
-	}
-	onClick(e) {
-		this.movement.on(this.el).start();
-	}
-}
 
 class Table extends View {
 
