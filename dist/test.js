@@ -8634,7 +8634,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  */
 		each: function each(target, fn) {
 			var elements;
-	
+			if (!target || target.length === 0) return undefined;
+			if (!fn) return target;
 			if (typeof target == "string") {
 				elements = _dom2.default.find(target);
 			} else if (target.length || target instanceof NodeList) {
@@ -10932,7 +10933,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	//TESTS
 	
 	var cookie = new CookieAccept();
-	var move = new Move();
 	
 	var table1 = new Table({ el: _dom2.default.find('#table') });
 	var table2 = new Table({ el: 'div.table-test.class2.class3>a.js--button{TEST cookie}' });

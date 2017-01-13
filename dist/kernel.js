@@ -8667,7 +8667,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  */
 		each: function each(target, fn) {
 			var elements;
-	
+			if (!target || target.length === 0) return undefined;
+			if (!fn) return target;
 			if (typeof target == "string") {
 				elements = _dom2.default.find(target);
 			} else if (target.length || target instanceof NodeList) {

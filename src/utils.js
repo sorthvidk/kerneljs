@@ -54,9 +54,10 @@ const Utils = {
 	/**
 	 * A vanilla implementation of each
 	 */
-	each:function(target, fn) {
+	each: function(target, fn) {
 		var elements;
-
+		if(!target || target.length === 0 ) return undefined;
+		if(!fn) return target;
 		if ( typeof target == "string" ) {
 			elements = DOM.find(target);
 		}
