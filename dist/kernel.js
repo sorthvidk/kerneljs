@@ -133,8 +133,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {String} content Optional string HTML content to be injected into a generated element
 	 * @param {Object} events A json object containing the events for the instance
 	 * @param {String} displayName A huma readable name for the View
-	 * @param {Object} data A json object containing text strings to be added to markup with data attributes data-text=key
+	 * @param {Object} state A json object containing the state of the view. Text strings to be added to markup with data attributes data-text=key will be automatically updated when calling setState
 	 * @param {String} mount if a mount is provided the view automatically mount to the given point
+	 * @param {Function} setState function is copying new states into the local state Object.
 	 */
 	var View = function () {
 		function View(_ref) {
@@ -146,8 +147,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			    events = _ref$events === undefined ? null : _ref$events,
 			    _ref$displayName = _ref.displayName,
 			    displayName = _ref$displayName === undefined ? 'View' : _ref$displayName,
-			    _ref$data = _ref.data,
-			    data = _ref$data === undefined ? null : _ref$data,
+			    _ref$state = _ref.state,
+			    state = _ref$state === undefined ? null : _ref$state,
 			    _ref$mount = _ref.mount,
 			    mount = _ref$mount === undefined ? null : _ref$mount;
 	
@@ -157,20 +158,21 @@ return /******/ (function(modules) { // webpackBootstrap
 			this.instanceId = _utils2.default.getCuid();
 			this.initUpdate = false;
 			this.events = events;
-			this.data = data;
+			this.state = state;
 			this.mountPoint = mount;
+			this.textNodes = {};
 	
 			if (typeof el == "string") {
 				this.rootEl = (0, _emmet2.default)(el);
 				this.el = this.rootEl.childNodes[0];
 			} else if (el instanceof NodeList && el.length === 0) {
-				throw new Error("View el is empty NodeList!");
+				throw new Error(this.displayName + " el is empty NodeList!");
 			} else {
 				this.el = _dom2.default.elementProxy(el);
 			}
 			this.eventListeners = [];
 			this.delegateEvents();
-			this.update();
+			this.initStateRefereces();
 			if (this.mountPoint) {
 				this.render();
 			}
@@ -219,34 +221,56 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 	
 			/**
-	  * A "public" function, updates all data-text data attributes
+	  * A "private" function, creates references to textnodes in the view so they can be updated later on TODO: remove data attributes and handle wired behavious as single tags (input, br and hr).
 	  */
 	
 		}, {
-			key: 'update',
-			value: function update() {
+			key: 'initStateRefereces',
+			value: function initStateRefereces() {
 				var _this2 = this;
 	
-				if (!this.data) return;
-				Object.keys(this.data).forEach(function (item) {
+				if (!this.state) return;
+				Object.keys(this.state).forEach(function (item) {
 					var el = _dom2.default.find(_this2.el.parentNode, '[data-text=' + item + ']')[0];
-					if (el && _this2.data[item]) {
-						var textNode = null;
-						_utils2.default.each(el.childNodes, function (childNode) {
-							if (childNode.nodeType === 3) {
-								textNode = { exist: childNode.nodeType === 3, el: childNode };
-							}
-						});
-						if (!textNode) {
-							el.insertBefore(document.createTextNode(_this2.data[item]), el.firstChild);
-						} else if (textNode && textNode.exist) {
-							textNode.el.textContent = _this2.data[item];
-						} else {
-							throw new Error("Can't update view! somethings wrong in selecting textNodes!");
-						}
+					if (el && _this2.state[item]) {
+						_this2.textNodes[item] = document.createTextNode(_this2.state[item]);
+						el.insertBefore(_this2.textNodes[item], el.firstChild);
 					}
 				});
-				View.emitter.trigger('view:update', this);
+			}
+	
+			/**
+	  * A "private" function that updates all textNode references.
+	  */
+	
+		}, {
+			key: 'updateStateReferecenses',
+			value: function updateStateReferecenses() {
+				var _this3 = this;
+	
+				if (!this.state) return;
+				Object.keys(this.state).forEach(function (item) {
+					if (_this3.textNodes[item] && _this3.textNodes[item].textContent != _this3.state[item]) {
+						_this3.textNodes[item].textContent = _this3.state[item];
+					}
+				});
+				View.emitter.trigger('view:update', this.state);
+			}
+	
+			/**
+	  * A "public" function that setState the view TODO: what if a tag doesn't exist? should probabaly run through initTextNodes and handle state as emmutables to ensure racconditions doesn't break anything.
+	  * @param {Object} data new data to update the view
+	  */
+	
+		}, {
+			key: 'setState',
+			value: function setState() {
+				var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+				if (!state) return;
+				this.state = Object.assign(this.state, state);
+				//update textNodes
+				this.updateStateReferecenses();
 			}
 	
 			/**
@@ -256,10 +280,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: 'undelegateEvents',
 			value: function undelegateEvents() {
-				var _this3 = this;
+				var _this4 = this;
 	
 				this.eventListeners.forEach(function (listener) {
-					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this3));
+					_utils2.default.off(listener.element, listener.eventName, listener.eventHandler.bind(_this4));
 				});
 				return true;
 			}
