@@ -139,7 +139,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			this.eventListeners = [];
 			this.delegateEvents();
 			this.update();
-			_log2.default.fn(displayName + ' ' + this.instanceId + ' created');
 			if (this.mountPoint) {
 				this.render();
 			}
@@ -177,7 +176,6 @@ return /******/ (function(modules) { // webpackBootstrap
 					}
 	
 					[].concat(_toConsumableArray(elements)).map(function (element) {
-						_log2.default.db("delegateEvents element", element);
 						_this.eventListeners.push({ element: element, eventName: eventName, eventHandler: eventHandler });
 						_utils2.default.on(element, eventName, eventHandler.bind(_this));
 					});

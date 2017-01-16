@@ -27,7 +27,7 @@ class View {
 			this.el = this.rootEl.childNodes[0];
 		}
 		else if (el instanceof NodeList && el.length === 0 ) {
-			throw new Error("View el is empty NodeList!");
+			throw new Error(this.displayName + " el is empty NodeList!");
 		}
 		else {
 			this.el = DOM.elementProxy(el);
@@ -35,7 +35,6 @@ class View {
 		this.eventListeners = [];
 		this.delegateEvents();
 		this.update();
-		Log.fn(displayName+' ' + this.instanceId + ' created');
 		if(this.mountPoint) {
 			this.render();
 		}
@@ -69,7 +68,6 @@ class View {
 
 
 			[...elements].map( (element) => {
-				Log.db("delegateEvents element",element);
 				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
 				Utils.on(element, eventName, eventHandler.bind(this));
 			});
