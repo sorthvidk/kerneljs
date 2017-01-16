@@ -10,17 +10,19 @@ import { EventEmitter } from './event';
  * @param {String} content Optional string HTML content to be injected into a generated element
  * @param {Object} events A json object containing the events for the instance
  * @param {String} displayName A huma readable name for the View
- * @param {Object} data A json object containing text strings to be added to markup with data attributes data-text=key
+ * @param {Object} state A json object containing the state of the view. Text strings to be added to markup with data attributes data-text=key will be automatically updated when calling setState
  * @param {String} mount if a mount is provided the view automatically mount to the given point
+ * @param {Function} setState function is copying new states into the local state Object.
  */
 class View {
 
-	constructor({el = null, content = null, events = null, displayName = 'View', data = null, mount = null }) { //class constructor
+	constructor({el = null, content = null, events = null, displayName = 'View', state = null, mount = null }) { //class constructor
 		this.instanceId = Utils.getCuid();
 		this.initUpdate = false;
 		this.events = events;
-		this.data = data;
+		this.state = state;
 		this.mountPoint = mount;
+		this.textNodes = {};
 
 		if ( typeof el == "string" ) {
 			this.rootEl = Emmet(el);
@@ -34,7 +36,7 @@ class View {
 		}
 		this.eventListeners = [];
 		this.delegateEvents();
-		this.update();
+		this.initStateRefereces();
 		if(this.mountPoint) {
 			this.render();
 		}
@@ -75,29 +77,42 @@ class View {
 	}
 
 	/**
-	* A "public" function, updates all data-text data attributes
+	* A "private" function, creates references to textnodes in the view so they can be updated later on TODO: remove data attributes and handle wired behavious as single tags (input, br and hr).
 	*/
-	update() {
-		if(!this.data) return;
-			Object.keys(this.data).forEach((item)=>{
+	initStateRefereces() {
+		if(!this.state) return;
+		Object.keys(this.state).forEach((item)=>{
 			let el = DOM.find(this.el.parentNode,'[data-text='+ item +']')[0];
-			if(el && this.data[item]) {
-				let textNode = null;
-				Utils.each(el.childNodes, (childNode) => {
-					if(childNode.nodeType===3) {
-						textNode = { exist: childNode.nodeType===3, el: childNode };
-					}
-				});
-				if(!textNode) {
-					el.insertBefore(document.createTextNode(this.data[item]), el.firstChild);
-				} else if(textNode && textNode.exist){
-					textNode.el.textContent = this.data[item];
-				} else {
-					throw new Error("Can't update view! somethings wrong in selecting textNodes!")
-				}
+			if(el && this.state[item]) {
+				this.textNodes[item] = document.createTextNode(this.state[item]);
+				el.insertBefore(this.textNodes[item], el.firstChild);
 			}
 		});
-		View.emitter.trigger('view:update', this);
+	}
+
+	/**
+	* A "private" function that updates all textNode references.
+	*/
+
+	updateStateReferecenses(){
+		if(!this.state) return;
+		Object.keys(this.state).forEach((item)=>{
+			if(this.textNodes[item] && this.textNodes[item].textContent != this.state[item]) {
+				this.textNodes[item].textContent = this.state[item];
+			}
+		});
+		View.emitter.trigger('view:update', this.state);
+	}
+
+	/**
+	* A "public" function that setState the view TODO: what if a tag doesn't exist? should probabaly run through initTextNodes and handle state as emmutables to ensure racconditions doesn't break anything.
+	* @param {Object} data new data to update the view
+	*/
+	setState( state=null ){
+		if(!state) return;
+		this.state = Object.assign(this.state, state);
+		//update textNodes
+		this.updateStateReferecenses();
 	}
 
 	/**

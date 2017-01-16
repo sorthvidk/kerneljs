@@ -58,7 +58,7 @@ class ModalBox extends View {
 		};
 		settings.displayName = 'ModalBox';
 		settings.el = 'div.modal.'+settings.cssClasses+'>a.button.button--icon.has-icon.js--close-modal[href=""]>span.icon[data-text="close"]^div.modal__content.js--modal-content';
-		settings.data = {close:'×'};
+		settings.state = {close:'×'};
 		super(settings);
 
 		this.content = settings.content;
@@ -165,7 +165,7 @@ class CookieAccept extends View {
 			},
 			displayName: 'Cookie-accept',
 			el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
-			data: {
+			state: {
 				heading: 'heading text  g f dsf dsf dsfdsf ',
 				text: 'cookie kasse sdf dsf sdf dsf'
 			},
@@ -183,13 +183,30 @@ class CookieAccept extends View {
 	onClick(e) {
 		Log.db("CookieAccept | onClick",Utils.cookie.get('cookietest'))
 		e.preventDefault();
-		this.data.heading = 'New heading updated';
-		this.data.text = 'New text updated';
-		this.update();
 	}
 }
+class Updater extends View {
+	constructor(settings = {}) {
+		settings = settings || {};
 
-
+		Object.assign(settings, {
+			events: {
+				'keyup .form-input': 'onKeyUp'
+			},
+			state: {
+				'output': 'output container will we overwritten',
+				'shown': false
+			},
+			displayName: 'Cookie-accept',
+			el: 'div.form-container>input.form-input[placeholder="prøv at skrive noget"]+div.form-output[data-text="output"]',
+			mount: '.container'
+		})
+		super(settings);
+	}
+	onKeyUp(e) {
+		this.setState({ 'output': e.target.value });
+	}
+}
 
 
 //TESTS
