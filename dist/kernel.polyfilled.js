@@ -55,11 +55,44 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(81);
-	module.exports = __webpack_require__(378);
+	module.exports = __webpack_require__(1);
 
 
 /***/ },
-/* 1 */,
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Utils = exports.DOM = exports.View = exports.Log = undefined;
+	
+	var _view = __webpack_require__(2);
+	
+	var _view2 = _interopRequireDefault(_view);
+	
+	var _dom = __webpack_require__(5);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	var _utils = __webpack_require__(4);
+	
+	var _utils2 = _interopRequireDefault(_utils);
+	
+	var _log = __webpack_require__(3);
+	
+	var _log2 = _interopRequireDefault(_log);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.Log = _log2.default;
+	exports.View = _view2.default;
+	exports.DOM = _dom2.default;
+	exports.Utils = _utils2.default;
+
+/***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -10667,363 +10700,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	};
 
-/***/ },
-/* 378 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-	
-	var _log = __webpack_require__(3);
-	
-	var _log2 = _interopRequireDefault(_log);
-	
-	var _view = __webpack_require__(2);
-	
-	var _view2 = _interopRequireDefault(_view);
-	
-	var _dom = __webpack_require__(5);
-	
-	var _dom2 = _interopRequireDefault(_dom);
-	
-	var _utils = __webpack_require__(4);
-	
-	var _utils2 = _interopRequireDefault(_utils);
-	
-	var _emmet = __webpack_require__(6);
-	
-	var _emmet2 = _interopRequireDefault(_emmet);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } //import shim from 'core-js';
-	
-	
-	// import { View } from '../dist/kernel';
-	// import { DOM } from '../dist/kernel';
-	// import { Utils } from '../dist/kernel';
-	// import { Log } from '../dist/kernel';
-	
-	var Overlay = function (_View) {
-		_inherits(Overlay, _View);
-	
-		function Overlay(settings) {
-			_classCallCheck(this, Overlay);
-	
-			settings.events = {
-				'click': 'onClick'
-			};
-	
-			settings.displayName = 'Overlay';
-			settings.el = 'div.overlay.overlay--modal';
-	
-			var _this = _possibleConstructorReturn(this, (Overlay.__proto__ || Object.getPrototypeOf(Overlay)).call(this, settings));
-	
-			_this.bodyRef = _dom2.default.find('body');
-	
-			_view2.default.emitter.on('modal:close', _this.close.bind(_this));
-	
-			return _this;
-		}
-	
-		_createClass(Overlay, [{
-			key: 'render',
-			value: function render(mountPoint) {
-				_get(Overlay.prototype.__proto__ || Object.getPrototypeOf(Overlay.prototype), 'render', this).call(this, mountPoint);
-				this.addClass('is-active');
-			}
-		}, {
-			key: 'onClick',
-			value: function onClick(e) {
-				_log2.default.fn("Overlay | onClick");
-				if (e.target != this.el) {
-					return false;
-				}
-				_view2.default.emitter.trigger('overlay:clicked', e);
-				this.close();
-			}
-		}, {
-			key: 'close',
-			value: function close(e) {
-				_dom2.default.removeClass(this.bodyRef, 'is-fixed');
-				_dom2.default.removeClass(this.bodyRef, 'is-blurred');
-				this.remove();
-			}
-		}]);
-	
-		return Overlay;
-	}(_view2.default);
-	
-	var ModalBox = function (_View2) {
-		_inherits(ModalBox, _View2);
-	
-		function ModalBox(settings) {
-			_classCallCheck(this, ModalBox);
-	
-			settings.events = {
-				'click .js--close-modal': 'onClose'
-			};
-			settings.displayName = 'ModalBox';
-			settings.el = 'div.modal.' + settings.cssClasses + '>a.button.button--icon.has-icon.js--close-modal[href=""]>span.icon[data-text="close"]^div.modal__content.js--modal-content';
-			settings.state = { close: '×' };
-	
-			var _this2 = _possibleConstructorReturn(this, (ModalBox.__proto__ || Object.getPrototypeOf(ModalBox)).call(this, settings));
-	
-			_this2.content = settings.content;
-	
-			_this2.overlay = new Overlay({ isFixed: true, fixBody: settings.fixBody });
-	
-			_view2.default.emitter.on('overlay:clicked', _this2.close.bind(_this2));
-			return _this2;
-		}
-	
-		_createClass(ModalBox, [{
-			key: 'render',
-			value: function render() {
-				this.find('.js--modal-content')[0].innerHTML = this.content;
-				this.overlay.render('body');
-				this.overlay.append(this.el);
-				_view2.default.emitter.trigger('modalbox:rendered', this);
-			}
-		}, {
-			key: 'onClose',
-			value: function onClose(e) {
-				e.stopPropagation();
-				_view2.default.emitter.trigger('modal:close');
-				this.close();
-			}
-		}, {
-			key: 'close',
-			value: function close() {
-				this.remove();
-			}
-		}]);
-	
-		return ModalBox;
-	}(_view2.default);
-	
-	var Box = function (_View3) {
-		_inherits(Box, _View3);
-	
-		function Box(settings) {
-			_classCallCheck(this, Box);
-	
-			settings.events = {
-				'click .js--button-1': 'onClick',
-				'click .js--button-2': 'onClick2',
-				'click .js--button-3': 'onClick3',
-				'click .js--button-4': 'onClick4',
-				'click .js--button-5': 'onClick5',
-				'mouseenter': 'onMouseEnter'
-			};
-	
-			var _this3 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this, settings));
-	
-			_this3.active = false;
-			var buttons = _this3.find('.button');
-			_dom2.default.addClass(buttons, 'is-active');
-			return _this3;
-		}
-	
-		_createClass(Box, [{
-			key: 'onMouseEnter',
-			value: function onMouseEnter(e) {
-				_log2.default.fn('Box | onMouseEnter', this.instanceId, "this.active=" + this.active);
-				this.toggleClass('is-hovered', this.active);
-			}
-		}, {
-			key: 'onClick',
-			value: function onClick(e) {
-				e.preventDefault();
-				_utils2.default.scrollTo(boxes[2], 2000);
-			}
-		}, {
-			key: 'onClick2',
-			value: function onClick2(e) {
-				e.preventDefault();
-				boxes[1].remove();
-			}
-		}, {
-			key: 'onClick3',
-			value: function onClick3(e) {
-				this.active = !this.active;
-				e.preventDefault();
-				_view2.default.emitter.trigger('view:action', this);
-			}
-		}, {
-			key: 'onClick4',
-			value: function onClick4(e) {
-				e.preventDefault();
-				this.modal = new ModalBox({ content: '<div>We did it!</div>', cssClasses: 'modal--success', fixBody: true });
-				this.modal.render();
-			}
-		}, {
-			key: 'onClick5',
-			value: function onClick5(e) {
-				e.preventDefault();
-				_log2.default.fn("onClick4");
-				_utils2.default.scrollTo(boxes[0], 2000);
-			}
-		}]);
-	
-		return Box;
-	}(_view2.default);
-	
-	var boxes = _utils2.default.viewFactory('.box', Box, { displayName: 'Lars' });
-	
-	var Table = function (_View4) {
-		_inherits(Table, _View4);
-	
-		function Table(settings) {
-			_classCallCheck(this, Table);
-	
-			settings.events = {
-				'click': 'onClick'
-			};
-			settings.displayName = 'Table';
-			return _possibleConstructorReturn(this, (Table.__proto__ || Object.getPrototypeOf(Table)).call(this, settings));
-		}
-	
-		_createClass(Table, [{
-			key: 'onMouseEnter',
-			value: function onMouseEnter(e) {
-				_log2.default.fn('Table | onMouseEnter');
-			}
-		}, {
-			key: 'onClick',
-			value: function onClick(e) {
-				_log2.default.db("cookie", _utils2.default.cookie.get('cookietest'));
-				e.preventDefault();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				_dom2.default.append(_dom2.default.find('body'), this.el);
-			}
-		}]);
-	
-		return Table;
-	}(_view2.default);
-	
-	var CookieAccept = function (_View5) {
-		_inherits(CookieAccept, _View5);
-	
-		function CookieAccept() {
-			var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	
-			_classCallCheck(this, CookieAccept);
-	
-			settings = settings || {};
-	
-			Object.assign(settings, {
-				events: {
-					//'click .js--button': 'onClick',
-					'click': 'onClick'
-				},
-				displayName: 'Cookie-accept',
-				el: 'div.section-header>span.heading[data-text="heading"]>div.test^span.section-text[data-text="text"]',
-				state: {
-					heading: 'heading text  g f dsf dsf dsfdsf ',
-					text: 'cookie kasse sdf dsf sdf dsf'
-				},
-				mount: '.container'
-			});
-	
-			var _this5 = _possibleConstructorReturn(this, (CookieAccept.__proto__ || Object.getPrototypeOf(CookieAccept)).call(this, settings));
-	
-			_view2.default.emitter.on("view:action", _this5.onAction.bind(_this5));
-			return _this5;
-		}
-	
-		_createClass(CookieAccept, [{
-			key: 'onAction',
-			value: function onAction(e) {
-				_log2.default.fn("onAction", this, e);
-			}
-		}, {
-			key: 'onMouseEnter',
-			value: function onMouseEnter(e) {
-				_log2.default.fn('CookieAccept | onMouseEnter');
-			}
-		}, {
-			key: 'onClick',
-			value: function onClick(e) {
-				_log2.default.db("CookieAccept | onClick", _utils2.default.cookie.get('cookietest'));
-				e.preventDefault();
-			}
-		}]);
-	
-		return CookieAccept;
-	}(_view2.default);
-	
-	var Updater = function (_View6) {
-		_inherits(Updater, _View6);
-	
-		function Updater() {
-			var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	
-			_classCallCheck(this, Updater);
-	
-			settings = settings || {};
-	
-			Object.assign(settings, {
-				events: {
-					'keyup .form-input': 'onKeyUp'
-				},
-				state: {
-					'output': 'output container will we overwritten',
-					'shown': false
-				},
-				displayName: 'Cookie-accept',
-				el: 'div.form-container>input.form-input[placeholder="prøv at skrive noget"]+div.form-output[data-text="output"]',
-				mount: '.container'
-			});
-			return _possibleConstructorReturn(this, (Updater.__proto__ || Object.getPrototypeOf(Updater)).call(this, settings));
-		}
-	
-		_createClass(Updater, [{
-			key: 'onKeyUp',
-			value: function onKeyUp(e) {
-				this.setState({ 'output': e.target.value });
-			}
-		}]);
-	
-		return Updater;
-	}(_view2.default);
-	
-	//TESTS
-	
-	var cookie = new CookieAccept();
-	
-	var table1 = new Table({ el: _dom2.default.find('#table') });
-	var table2 = new Table({ el: 'div.table-test.class2.class3>a.js--button{TEST cookie}' });
-	table2.render();
-	
-	_log2.default.db(table1.hasClass('table'));
-	_log2.default.db(table1.hasClass('abe'));
-	_log2.default.db(table1.addClass('abe').hasClass('abe'));
-	_log2.default.db(table1.removeClass('abe').hasClass('abe'));
-	
-	var section = _dom2.default.closest(table1, 'section');
-	_log2.default.db("section", section);
-	_dom2.default.addClass(section, 'extra-class');
-	
-	_log2.default.db('TEST getUrlParms', _utils2.default.getUrlParms('t'));
-	_log2.default.db('TEST getHeight', _utils2.default.getHeight(table1));
-	_log2.default.db('TEST isElementInViewport', _utils2.default.isElementInViewport(boxes[2]));
-	_log2.default.db('TEST cumulativeOffset', _utils2.default.cumulativeOffset(boxes[2]));
-	
-	_utils2.default.cookie.set({ cookieValue: 23459875934857, cookieName: 'cookietest' });
-
 /***/ }
 /******/ ])
 });
 ;
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=kernel.polyfilled.js.map

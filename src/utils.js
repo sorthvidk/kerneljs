@@ -52,11 +52,12 @@ const Utils = {
 
 
 	/**
-	 * A vanilla implementation of each
-	 */
-	each:function(target, fn) {
+	* A vanilla implementation of each
+	*/
+	each: function(target, fn) {
 		var elements;
-
+		if(!target || target.length === 0 ) return undefined;
+		if(!fn) return target;
 		if ( typeof target == "string" ) {
 			elements = DOM.find(target);
 		}
@@ -66,10 +67,9 @@ const Utils = {
 		else if ( target instanceof Element ) {
 			elements = [target];
 		}
-		if ( elements.length === 0 || !(elements instanceof NodeList) ) {
+		if ( elements.length === 0 ) {
 			return false;
 		}
-
 		for (var i = 0; i < elements.length; i++) {
 			fn(elements[i], i);
 		}
@@ -80,11 +80,11 @@ const Utils = {
 	 * @param {Element} elem - the associated DOMelement
 	 * @param {String} eventName - the event string
 	 * @param {Function} eventHandler - the handler function
-	 */
+	*/
 	on: function(el, eventName, eventHandler) {
 		var elem = el instanceof View ? el.el : el;
 		if (elem.addEventListener) {
-			elem.addEventListener(eventName, eventHandler);
+			elem.addEventListener(eventName, eventHandler, false);
 		} else {
 			elem.attachEvent('on' + eventName, function(){
 			  eventHandler.call(elem);
@@ -100,12 +100,30 @@ const Utils = {
 	 */
 	off: function(el, eventName, eventHandler) {
 		var elem = el instanceof View ? el.el : el;
-		if (elem.removeEventListener)
-			elem.removeEventListener(eventName, eventHandler);
-		else
+		if (elem.removeEventListener) {
+			elem.removeEventListener(eventName, eventHandler, false);
+		} else {
 			elem.detachEvent('on' + eventName, eventHandler);
+		}
 	},
 
+	/**
+	 * trigger custom events
+	 * @param {Element} el - the DOMelement in question
+	 * @param {String} type - type the custom event name
+	 * @param {Object} details - details object
+	 */
+	trigger: function(el, type, detail) {
+		var e;
+		if(window.CustomEvent) {
+			e = new CustomEvent(type, { bubbles: true, cancelable: true, detail: detail });
+		} else {
+			e = document.createEvent('Event');
+			e.initEvent(_name, true, true, { detail: detail });
+			e.detail = detail;
+		}
+		el.dispatchEvent(event);
+	},
 
 	/**
 	 * Checks if the element is within the viewport
