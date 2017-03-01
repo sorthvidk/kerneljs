@@ -182,6 +182,7 @@ class CookieAccept extends View {
 	}
 	onClick(e) {
 		Log.db("CookieAccept | onClick",Utils.cookie.get('cookietest'))
+		this.setState({'heading': 'new heading'});
 		e.preventDefault();
 	}
 }

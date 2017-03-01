@@ -54,7 +54,7 @@ class View {
 			// is the target specified with a selector, or is this.el implied?
 			let target = eventSplit.length > 1 ? eventSplit[1] : this.el;
 
-			let eventHandler = this[this.events[prop]];
+			let eventHandler = this[this.events[prop]].bind(this);
 
 			// is the target already an element or a selector?
 			let elements;
@@ -71,7 +71,7 @@ class View {
 
 			[...elements].map( (element) => {
 				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
-				Utils.on(element, eventName, eventHandler.bind(this));
+				Utils.on(element, eventName, eventHandler);
 			});
 		}
 	}
@@ -120,7 +120,7 @@ class View {
 	*/
 	undelegateEvents() {
 		this.eventListeners.forEach((listener)=>{
-			Utils.off(listener.element, listener.eventName, listener.eventHandler.bind(this));
+			Utils.off(listener.element, listener.eventName, listener.eventHandler);
 		});
 		return true;
 	}

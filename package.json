@@ -1,5 +1,5 @@
 {
-  "name": "kerneljs",
+  "name": "kerneljsorthvid",
   "version": "2.0.3",
   "description": "Very slim ES6 javascript framework. Based around a View class. Kerneljs is aimed at progressive enhanced web development",
   "main": "dist/kernel.js",
@@ -8,6 +8,10 @@
     "dev": "webpack-dev-server --inline -d",
     "build": "webpack",
     "deploy": "git reset --hard; git checkout master; git pull"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/sorthvid_dk/kerneljs"
   },
   "keywords": [
     "ES6",

@@ -114,7 +114,14 @@ const Utils = {
 	 * @param {Object} details - details object
 	 */
 	trigger: function(el, type, detail) {
-		var event = new CustomEvent(type, { 'detail': detail ? detail : {} });
+		var e;
+		if(window.CustomEvent) {
+			e = new CustomEvent(type, { bubbles: true, cancelable: true, detail: detail });
+		} else {
+			e = document.createEvent('Event');
+			e.initEvent(_name, true, true, { detail: detail });
+			e.detail = detail;
+		}
 		el.dispatchEvent(event);
 	},
 
