@@ -60,19 +60,19 @@ const DOM = {
 
 		if ( query.indexOf('.') > -1 ) {
 			strippedQuery = query.split('.')[1];
-			compareFunction = function(_el){return typeof _el.className == "string" ? _el.className.indexOf(strippedQuery) > -1 : null;};
+			compareFunction = _el => typeof _el.className == "string" ? _el.className.indexOf(strippedQuery) > -1 : null;
 		}
 		else if ( query.indexOf('#') > -1 ) {
 			strippedQuery = query.split('#')[1];
-			compareFunction = function(_el) { return _el.id ? _el.id === strippedQuery : null; };
+			compareFunction = _el => _el.id ? _el.id === strippedQuery : null;
 		}
 		else {
 			strippedQuery = query;
-			compareFunction = function(_el) { return _el.tagName ? _el.tagName.toLowerCase() === strippedQuery : null; };
+			compareFunction = _el =>  _el.tagName ? _el.tagName.toLowerCase() === strippedQuery : null;
 		}
 
 		result = closestRecursion(searchOrigin, compareFunction);
-		
+
 		function closestRecursion(el, fn) {
 			if ( !(el instanceof Element)) return false;
 			return el && (fn(el) ? el : closestRecursion(el.parentNode, fn));
@@ -81,13 +81,13 @@ const DOM = {
 		return result;
 	},
 
-	append:function(el,child){
+	append: function(el,child){
 		var element = this.elementProxy(el);
 		Log.fn("DOM append", element.childNodes, child.childNodes)
 		element.appendChild(child);
 	},
 
-	remove:function(el) {
+	remove: function(el) {
 		var element = this.elementProxy(el);
 		var parent = element.parentNode;
 		try { parent.removeChild(element); }

@@ -219,11 +219,12 @@ let table1 = new Table({el: DOM.find('#table') });
 let table2 = new Table({el: 'div.table-test.class2.class3>a.js--button{TEST cookie}'});
 table2.render();
 
+console.log("------ DOM test --------");
 
-Log.db(table1.hasClass('table'));
-Log.db(table1.hasClass('abe'));
-Log.db(table1.addClass('abe').hasClass('abe'));
-Log.db(table1.removeClass('abe').hasClass('abe'));
+Log.db("TEST - hasClass", table1.hasClass('table'));
+Log.db("TEST - hasClass", table1.hasClass('abe'));
+Log.db("TEST - add class", table1.addClass('abe').hasClass('abe'));
+Log.db("TEST remove class", table1.removeClass('abe').hasClass('abe'));
 
 var section = DOM.closest(table1,'section');
 Log.db("section", section);
