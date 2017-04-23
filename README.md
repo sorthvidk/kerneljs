@@ -36,7 +36,7 @@ new Box({el: document.querySelector('.box')})
 ## Events ##
 
 ## DOM - Utility functions for selecting, looping etc. 
-We added a few wellknown functions from jQuery thanks to [you Might Not Need Jquery](http://lmgtfy.com/)(http://youmightnotneedjquery.com/) for inspiration.
+We added a few wellknown functions from jQuery thanks to [you Might Not Need Jquery](http://youmightnotneedjquery.com/) for inspiration.
 
 * find 
 * closest
