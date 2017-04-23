@@ -63,7 +63,14 @@ DOM.find('.box', DOM.find('.header'));
 ```
 
 ### closest ###
+```js
+import DOM from 'kerneljsorthvid';
 
+var box = new Box({el: document.querySelector('.box')})
+
+DOM.closest(box, 'article');
+// -> closest <article> from the .box position in the dom tree. 
+```
 
 ## Emmet templates ##
 
