@@ -11,7 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/sorthvid_dk/kerneljs"
+    "url": "git@bitbucket.org:sorthvid_dk/kerneljs.git"
+  },
+  "bugs": {
+    "url": "https://bitbucket.org/sorthvid_dk/kerneljs/issues"
   },
   "keywords": [
     "ES6",
