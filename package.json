@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:sorthvid_dk/kerneljs.git"
+    "url": "https://github.com/sorthvidk/kerneljs"
   },
   "bugs": {
-    "url": "https://bitbucket.org/sorthvid_dk/kerneljs/issues"
+    "url": "https://github.com/sorthvidk/kerneljs/issues"
   },
   "keywords": [
     "ES6",
@@ -43,6 +43,6 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "es6-event-emitter": "^1.5.2"
+    "es6-event-emitter": "^1.9.0"
   }
 }

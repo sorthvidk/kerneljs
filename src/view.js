@@ -2,7 +2,7 @@ import Log from './log';
 import Utils from './utils';
 import DOM from './dom';
 import Emmet from './emmet';
-import { EventEmitter } from './event';
+import { Events} from './events';
 
 /**
  * $0 is the standard sorthvid content container class. All parameters are wrapped in ES6 object syntax.
@@ -69,9 +69,9 @@ class View {
 			}
 
 
-			[...elements].map( (element) => {
+			Utils.each(elements, (element) => {
 				this.eventListeners.push({element:element, eventName:eventName, eventHandler:eventHandler});
-				Utils.on(element, eventName, eventHandler);
+				Events.addEvent(element, eventName, eventHandler);
 			});
 		}
 	}
@@ -101,7 +101,7 @@ class View {
 				this.textNodes[item].textContent = this.state[item];
 			}
 		});
-		View.emitter.trigger('view:update', this.state);
+		Events.trigger('view:update', this.state);
 	}
 
 	/**
@@ -120,7 +120,7 @@ class View {
 	*/
 	undelegateEvents() {
 		this.eventListeners.forEach((listener)=>{
-			Utils.off(listener.element, listener.eventName, listener.eventHandler);
+			Events.removeEvent(listener.element, listener.eventName, listener.eventHandler);
 		});
 		return true;
 	}
@@ -189,7 +189,7 @@ class View {
 	}
 
 	static get emitter() {
-		return EventEmitter;
+		return Events;
 	}
 
 }

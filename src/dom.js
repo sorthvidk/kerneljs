@@ -4,7 +4,7 @@ import Utils from './utils';
 
 const DOM = {
 
-	elementProxy:function(el) {
+	elementProxy: function(el) {
 		if ( el instanceof View ) {
 			return el.el;
 		}
@@ -19,7 +19,7 @@ const DOM = {
 		}
 	},
 
-	listProxy:function(el) {
+	listProxy: function(el) {
 		if ( el instanceof View ) {
 			return [el.el];
 		}

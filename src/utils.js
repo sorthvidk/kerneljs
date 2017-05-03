@@ -1,6 +1,7 @@
 import Log from './log';
 import DOM from './dom';
 import View from './view';
+import {Events} from './events';
 
 
 Math.easeInOutQuad = function (t, b, c, d) {
@@ -54,7 +55,7 @@ const Utils = {
 	/**
 	* A vanilla implementation of each
 	*/
-	each: function(target, fn) {
+	each: (target, fn) => {
 		var elements;
 		if(!target || target.length === 0 ) return undefined;
 		if(!fn) return target;
@@ -76,60 +77,10 @@ const Utils = {
 	},
 
 	/**
-	 * Attaches an event listener
-	 * @param {Element} elem - the associated DOMelement
-	 * @param {String} eventName - the event string
-	 * @param {Function} eventHandler - the handler function
-	*/
-	on: function(el, eventName, eventHandler) {
-		var elem = el instanceof View ? el.el : el;
-		if (elem.addEventListener) {
-			elem.addEventListener(eventName, eventHandler, false);
-		} else {
-			elem.attachEvent('on' + eventName, function(){
-			  eventHandler.call(elem);
-			});
-		}
-	},
-
-	/**
-	 * Removes an event listener
-	 * @param {Element} elem - the associated DOMelement
-	 * @param {String} eventName - the event string
-	 * @param {Function} eventHandler - the handler function
-	 */
-	off: function(el, eventName, eventHandler) {
-		var elem = el instanceof View ? el.el : el;
-		if (elem.removeEventListener) {
-			elem.removeEventListener(eventName, eventHandler, false);
-		} else {
-			elem.detachEvent('on' + eventName, eventHandler);
-		}
-	},
-
-	/**
-	 * trigger custom events
-	 * @param {Element} el - the DOMelement in question
-	 * @param {String} type - type the custom event name
-	 * @param {Object} details - details object
-	 */
-	trigger: function(el, type, detail) {
-		var e;
-		if(window.CustomEvent) {
-			e = new CustomEvent(type, { bubbles: true, cancelable: true, detail: detail });
-		} else {
-			e = document.createEvent('Event');
-			e.initEvent(_name, true, true, { detail: detail });
-			e.detail = detail;
-		}
-		el.dispatchEvent(event);
-	},
-
-	/**
 	 * Checks if the element is within the viewport
 	 * @param {Element} el - the DOMelement in question
 	 */
-	isElementInViewport: function(el) {
+	isElementInViewport: el => {
 		var elem = el instanceof View ? el.el : el;
 		if (!elem) {
 			return
@@ -147,7 +98,7 @@ const Utils = {
 	 * Vanilla way of sniffing element height
 	 * @param {Element} elem - the DOMelement in question
 	 */
-	getHeight: function(el) {
+	getHeight: el => {
 		var elem = el instanceof View ? el.el : el;
 
 		var style = window.getComputedStyle(elem),
@@ -187,7 +138,7 @@ const Utils = {
 	 * @param {String} name - the variable name
 	 * @param {String} url - a way to override the default root of the url parameter
 	 */
-	getUrlParms: function(name, url) {
+	getUrlParms: (name, url) => {
 		var url = url || window.location.search;
 		var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
 		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -239,7 +190,7 @@ const Utils = {
 		animateScroll();
 	},
 
-	cumulativeOffset: function(el) {
+	cumulativeOffset: el => {
 		var elem = el instanceof View ? el.el : el;
 
 		var top = 0,
@@ -311,11 +262,11 @@ const Utils = {
 		bckspc: 8
 	},
 
-	getCuid: function(){
+	getCuid: ()=>{
 		return Math.random().toString().substring(2,7);
 	},
 
-	screenSize: function(size){
+	screenSize: size=>{
 		var sizes = {
 			"xsScreen": 567,
 			"sScreen": 768,
@@ -327,6 +278,19 @@ const Utils = {
 		}
 		return sizes[size];
 	},
+
+	on: (a,b,c)=>{
+		Events.addEvent.call(this, a, b, c);
+		console.warn("Depricated - use eventlistners through Events class");
+	},
+	off: (a,b,c)=>{
+		Events.removeEvent.call(this, a, b, c)
+		console.warn("Depricated - use eventlistners through Events class");
+	},
+	trigger: (a,b,c)=>{
+		Events.triggerEvent.call(this, a,b,c);
+		console.warn("Depricated - use eventlistners through Events class");
+	}
 
 };
 
