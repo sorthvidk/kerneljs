@@ -26,7 +26,7 @@ class Overlay extends View {
 
 		this.bodyRef = DOM.find('body');
 
-		View.emitter.on('modal:close', this.close.bind(this));
+		View.Events.on('modal:close', this.close.bind(this));
 
 	}
 
@@ -38,7 +38,7 @@ class Overlay extends View {
 	onClick(e) {
 		Log.fn("Overlay | onClick");
 		if(e.target != this.el) { return false; }
-		View.emitter.trigger('overlay:clicked', e);
+		View.Events.trigger('overlay:clicked', e);
 		this.close();
 	}
 	close(e) {
@@ -65,17 +65,17 @@ class ModalBox extends View {
 
 		this.overlay = new Overlay({ isFixed: true, fixBody: settings.fixBody });
 
-		View.emitter.on('overlay:clicked', this.close.bind(this));
+		View.Events.on('overlay:clicked', this.close.bind(this));
 	}
 	render() {
 		this.find('.js--modal-content')[0].innerHTML = this.content;
 		this.overlay.render('body');
 		this.overlay.append(this.el);
-		View.emitter.trigger('modalbox:rendered', this);
+		View.Events.trigger('modalbox:rendered', this);
 	}
 	onClose(e) {
 		e.stopPropagation();
-		View.emitter.trigger('modal:close');
+		View.Events.trigger('modal:close');
 		this.close();
 	}
 	close() {
@@ -115,7 +115,7 @@ class Box extends View {
 	onClick3(e) {
 		this.active = !this.active;
 		e.preventDefault();
-		View.emitter.trigger('view:action', this);
+		View.Events.trigger('view:action', this);
 	}
 	onClick4(e) {
 		e.preventDefault();
@@ -172,7 +172,7 @@ class CookieAccept extends View {
 			mount: '.container'
 		})
 		super(settings);
-		View.emitter.on("view:action", this.onAction.bind(this));
+		View.Events.on("view:action", this.onAction.bind(this));
 	}
 	onAction(e) {
 		Log.fn("onAction",this, e);
@@ -181,7 +181,7 @@ class CookieAccept extends View {
 		Log.fn('CookieAccept | onMouseEnter');
 	}
 	onClick(e) {
-		Log.db("CookieAccept | onClick",Utils.cookie.get('cookietest'))
+		Log.db("CookieAccept | onClick", Utils.cookie.get('cookietest'))
 		this.setState({'heading': 'new heading'});
 		e.preventDefault();
 	}

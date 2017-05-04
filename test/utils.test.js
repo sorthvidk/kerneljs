@@ -13,6 +13,7 @@ var el = document.createElement('div');
 
 var Utils = kernel.Utils;
 var Dom = kernel.DOM;
+var Events = kernel.Events;
 //Utils tests
 describe('KernelJS Utils', function(){
 	describe('NodeJS DOM', function(){
@@ -61,28 +62,28 @@ describe('KernelJS Utils', function(){
 		var el = document.createElement('div');
 		var handler = function(e){ checker=e }
 		it('on - attach dom event returns undefined', function(){
-			expect(Utils.on(el, 'click', function(){ })).to.be.undefined;
+			expect(Events.addEvent(el, 'click', function(){ })).to.be.undefined;
 		})
 		it('on - eventListner execute handler', function(){
 			var checker = false;
-			Utils.on(el, 'click', function(){ checker = true; })
+			Events.addEvnet(el, 'click', function(){ checker = true; })
 			el.click();
 			expect(checker).to.be.true;
 		})
 		it('trigger - trigger custom event return undefinded', function(){
-			expect(Utils.trigger(el, 'click')).to.be.undefined;
+			expect(Events.triggerEvent(el, 'click')).to.be.undefined;
 		})
 		it('trigger - trigger custom event is heard', function(){
 			var checker;
-			Utils.on(el, 'click', function(e){ checker=e });
-			Utils.trigger(el, 'click', true);
+			Events.addEvent(el, 'click', function(e){ checker=e });
+			Events.triggerEvent(el, 'click', true);
 			expect(checker.type).equal('click');
 		})
 		it('off - remove eventListner', function(){
 			var checker;
-			Utils.on(el, 'click', handler);
-			Utils.off(el, 'click', handler);
-			Utils.trigger(el, 'click', true);
+			Events.addEvent(el, 'click', handler);
+			Events.removeEvent(el, 'click', handler);
+			Events.triggerEvent(el, 'click', true);
 			expect(checker).to.be.undefined;
 		})
 	});

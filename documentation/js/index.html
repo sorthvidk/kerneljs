@@ -177,6 +177,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#View#onTransitionEnd'
+                        class='regular pre-open'>
+                        #onTransitionEnd
+                      </a></li>
+                      
+                      <li><a
                         href='#View#append'
                         class='regular pre-open'>
                         #append
@@ -213,7 +219,7 @@
       addEvent
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/events.js#L16-L25'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/events.js#L16-L25'>
       <span>src/events.js</span>
       </a>
     
@@ -297,7 +303,7 @@
       removeEvent
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/events.js#L32-L39'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/events.js#L32-L39'>
       <span>src/events.js</span>
       </a>
     
@@ -381,7 +387,7 @@
       triggerEvent
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/events.js#L46-L56'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/events.js#L46-L56'>
       <span>src/events.js</span>
       </a>
     
@@ -465,7 +471,7 @@
       Log
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/log.js#L17-L56'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/log.js#L17-L56'>
       <span>src/log.js</span>
       </a>
     
@@ -526,7 +532,7 @@
       Utils
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/utils.js#L35-L295'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/utils.js#L35-L295'>
       <span>src/utils.js</span>
       </a>
     
@@ -939,7 +945,7 @@
       View
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/5d3e90a864cb80a85c1dc5b6f9cd2e83b48bdf81/src/view.js#L17-L195'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://bitbucket.org/sorthvid_dk/kerneljs/blob/7675a4f58f0f9d3e6c5ce32f175f56b9096c3f6a/src/view.js#L17-L204'>
       <span>src/view.js</span>
       </a>
     
@@ -1183,7 +1189,7 @@
 
   
 
-  <p>A &quot;public&quot; function that setState the view TODO: what if a tag doesn&#x27;t exist? should probabaly run through initTextNodes and handle state as emmutables to ensure racconditions doesn&#x27;t break anything.</p>
+  <p>A &quot;public&quot; function that setState the view TODO: what if a tag doesn&#x27;t exist? should probabaly run through initTextNodes and handle state as emmutables to ensure raceconditions doesn&#x27;t break anything.</p>
 
 
   <div class='pre p1 fill-light mt0'>setState(data: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, state: Any)</div>
@@ -1363,6 +1369,63 @@ Sets the View&#x27;s visible property to true</p>
           <div>
             <span class='code bold'>mountPoint</span> <code class='quiet'>([<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>](default null))</code> string containing a valid class or id selector
 
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='View#onTransitionEnd'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>onTransitionEnd(e)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>onTransitionEnd - placeholder for transitionEnd eventHandler</p>
+
+
+  <div class='pre p1 fill-light mt0'>onTransitionEnd(e: Any)</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>e</span> <code class='quiet'>(Any)</code> 
           </div>
           
         </div>

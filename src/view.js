@@ -19,7 +19,7 @@ class View {
 	constructor({el = null, content = null, events = null, displayName = 'View', state = null, mount = null }) { //class constructor
 		this.instanceId = Utils.getCuid();
 		this.initUpdate = false;
-		this.events = events;
+		this.events = Object.assign({'transitionend': 'onTransitionEnd'}, events);
 		this.state = state;
 		this.mountPoint = mount;
 		this.textNodes = {};
@@ -105,7 +105,7 @@ class View {
 	}
 
 	/**
-	* A "public" function that setState the view TODO: what if a tag doesn't exist? should probabaly run through initTextNodes and handle state as emmutables to ensure racconditions doesn't break anything.
+	* A "public" function that setState the view TODO: what if a tag doesn't exist? should probabaly run through initTextNodes and handle state as emmutables to ensure raceconditions doesn't break anything.
 	* @param {Object} data new data to update the view
 	*/
 	setState( state=null ){
@@ -151,11 +151,20 @@ class View {
 		}
 		return this;
 	}
+
+	/**
+	*  onTransitionEnd - placeholder for transitionEnd eventHandler
+	*/
+	onTransitionEnd(e) {
+		return;
+	}
+
 	/**
 	* A "public" function, which append a given elem/docFragtion into this.el
 	*/
 	append(elem) {
 		DOM.append(this.el, elem);
+		return this;
 	}
 
 	/**
@@ -188,7 +197,7 @@ class View {
 		return DOM.closest(this.el, selector);
 	}
 
-	static get emitter() {
+	static get Events() {
 		return Events;
 	}
 
