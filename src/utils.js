@@ -44,7 +44,7 @@ const Utils = {
 		[...elements].map((el) => {
 			let defaults = {el:el};
 			Object.assign(defaults,settings);
-			Log.db("defaults",defaults)
+			// Log.db("defaults",defaults)
 			views.push( new viewClass( defaults ) );
 		});
 		return views;
@@ -217,7 +217,7 @@ const Utils = {
 		})();
 
 		var start = position(),
-			change = elem.getClientRects()[0].top - start,
+			change = elem.getBoundingClientRect().top - start,
 			currentTime = 0,
 			increment = 20,
 			duration = (typeof(scrollDuration) === 'undefined') ? 500 : scrollDuration;
