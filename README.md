@@ -1,4 +1,5 @@
 # KernelJS #
+This Library is no longer maintained.
 KernelJS is sorthvid's main view class used for small progressive enhanced web projects. Where HTML is already present at render time. 
 
 ## Download ##
