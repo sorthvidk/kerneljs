@@ -84,10 +84,9 @@ Opera latest
 
 ## Comming releases ##
 * 3.0.0: remove emmet and replace with literal string templates.   
-* 2.1.0: Update event system, Automatic attachment of transitionEvents
-* 2.0.3: proper documentation
 
 ## Changelog ##
+* 2.1.1: added initialOptions as getter in viewClass, removed console.log in viewFactory
 * 2.0.1: fixed small bugs
 * 2.0.0: converted to ES6
 * 1.0.0: first version 
