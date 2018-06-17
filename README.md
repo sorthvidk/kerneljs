@@ -17,12 +17,15 @@ npm install --save kerneljsorthvid
 import { View } from 'kerneljsorthvid';
 
 let Box extends View {
-	constructor(options){
-		options.events = {
-			'click':'onClick'
+	get initialOptions() {
+		return {
+			events : {
+				'click':'onClick'
+			},
+			displayName : 'Box'
 		}
-
-		options.displayName = 'Box';
+	}
+	constructor(options){
 		super(options);
 	}
 	onClick() {
