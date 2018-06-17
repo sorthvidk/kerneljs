@@ -14,47 +14,90 @@ import { EventEmitter } from './event';
  * @param {String} mount if a mount is provided the view automatically mount to the given point
  * @param {Function} setState function is copying new states into the local state Object.
  */
+
+// {el = null, content = null, events = null, displayName = null, state = null, mount = null }
 class View {
 
-	constructor({el = null, content = null, events = null, displayName = 'View', state = null, mount = null }) { //class constructor
+	constructor(options = {}) { //class constructor
+		let defaults = {
+			el: 'span',
+			mountPoint: null,
+			displayName: 'anonymous viewclass',
+			events: {},
+			state: {}
+		};
+		this.options = {};
+		Object.assign(this.options, defaults, this.defaultOptions, options);
+
+		this.displayName = this.options.displayName;
 		this.instanceId = Utils.getCuid();
 		this.initUpdate = false;
-		this.events = events;
-		this.state = state;
-		this.mountPoint = mount;
+		this.state = this.options.state;
 		this.textNodes = {};
 
-		if ( typeof el == "string" ) {
-			this.rootEl = Emmet(el);
-			this.el = this.rootEl.childNodes[0];
-		}
-		else if (el instanceof NodeList && el.length === 0 ) {
-			throw new Error(this.displayName + " el is empty NodeList!");
-		}
-		else {
-			this.el = DOM.elementProxy(el);
-		}
+		this.setEl();
 		this.eventListeners = [];
 		this.delegateEvents();
 		this.initStateRefereces();
-		if(this.mountPoint) {
+		if(this.options.mountPoint) {
 			this.render();
 		}
 	}
 
 	/**
+	 * set own element
+	 */
+	setEl () {
+		// if el is a string
+		if ( typeof this.options.el == "string" ) {
+			if (/^[.#]/.test(this.options.el)) { // class or id selector passed
+				this.el = DOM.find(this.options.el)[0];
+				this.visible = true;
+			} else {
+				this.el = Emmet(this.options.el).childNodes[0];
+				this.visible = false;
+			}
+		}
+		else if (this.options.el instanceof NodeList && this.options.el.length === 0 ) {
+			throw new Error(this.displayName + " el is empty NodeList!");
+		}
+		else {
+			this.el = DOM.elementProxy(this.options.el);
+		}
+
+		// jQuery available
+		if (typeof window.jQuery === 'function') {
+			this.$el = window.jQuery(this.el);
+		} else { // jQuery is not defined yet
+			if (typeof Proxy == 'function') {
+				class Magic {
+					constructor () {
+						return new Proxy(this, this);
+					}
+					get (target, prop) {
+						return () => {
+							console.warn('You tried to use the function: ' + prop + '. jQuery is not defined yet, please load it before kernelJS if you want to use jQuery, otherwise use the build in helpers for DOM manipulations.');
+							return prop;
+						}
+					}
+				}
+				this.$el = new Magic();
+			}
+		}
+	}
+	/**
 	* delegating HTML events
 	*/
 	delegateEvents() {
 		if ( this.eventListeners.length > 0 ) throw new Error("Event listeners have already been delegated!");
-		for (let prop in this.events) {
+		for (let prop in this.options.events) {
 			let eventSplit = prop.split(' ');
 			let eventName = eventSplit[0];
 
 			// is the target specified with a selector, or is this.el implied?
 			let target = eventSplit.length > 1 ? eventSplit[1] : this.el;
 
-			let eventHandler = this[this.events[prop]].bind(this);
+			let eventHandler = this[this.options.events[prop]].bind(this);
 
 			// is the target already an element or a selector?
 			let elements;
@@ -142,10 +185,10 @@ class View {
 	* @param {String} mountPoint string containing a valid class or id selector
 	*/
 	render(mountPoint = null) {
-		if ( mountPoint ) this.mountPoint = mountPoint;
+		if ( mountPoint ) this.options.mountPoint = mountPoint;
 		if ( !this.visible ) {
-			if ( this.mountPoint ) {
-				DOM.append( DOM.find(this.mountPoint), this.el);
+			if ( this.options.mountPoint ) {
+				DOM.append( DOM.find(this.options.mountPoint), this.el);
 				this.visible = true;
 			} else throw new Error("Can't render! No mountpoint found!")
 		}
@@ -190,6 +233,9 @@ class View {
 
 	static get emitter() {
 		return EventEmitter;
+	}
+	get defaultOptions() {
+		return {};
 	}
 
 }

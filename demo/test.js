@@ -14,18 +14,19 @@ import Emmet from '../src/emmet';
 
 class Overlay extends View {
 
-	constructor(settings){
-
-		settings.events = {
-			'click':'onClick'
+	get defaultOptions() {
+		return {
+			events: {
+				'click':'onClick'
+			},
+			el: 'div.overlay.overlay--modal',
+			displayName: 'Overlay'
 		}
+	}
 
-		settings.displayName = 'Overlay';
-		settings.el = 'div.overlay.overlay--modal';
+	constructor(settings){
 		super(settings);
-
 		this.bodyRef = DOM.find('body');
-
 		View.emitter.on('modal:close', this.close.bind(this));
 
 	}
@@ -208,6 +209,10 @@ class Updater extends View {
 		this.setState({ 'output': e.target.value });
 	}
 }
+
+var tt = new View({el: '#testId1', displayName: 'tt'});
+
+Log.db("TEST - id selector", tt);
 
 
 //TESTS
