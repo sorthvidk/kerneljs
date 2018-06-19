@@ -9,7 +9,6 @@ const WebpackDevServer = require("webpack-dev-server");
 module.exports = {
 	entry: {
 		'kernel': ['./index.js'],
-		'kernel.polyfilled': ['babel-polyfill', './index.js'],
 		'test': ['babel-polyfill', './demo/test.js']
 
 	},

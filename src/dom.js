@@ -1,6 +1,4 @@
-import Log from './log';
 import View from './view';
-import Utils from './utils';
 
 const DOM = {
 
@@ -83,7 +81,6 @@ const DOM = {
 
 	append: function(el,child){
 		var element = this.elementProxy(el);
-		Log.fn("DOM append", element.childNodes, child.childNodes)
 		element.appendChild(child);
 	},
 

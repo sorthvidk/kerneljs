@@ -1,4 +1,3 @@
-import Log from './log';
 import DOM from './dom';
 import View from './view';
 
@@ -44,7 +43,6 @@ const Utils = {
 		[...elements].map((el) => {
 			let defaults = {el:el};
 			Object.assign(defaults,settings);
-			// Log.db("defaults",defaults)
 			views.push( new viewClass( defaults ) );
 		});
 		return views;
@@ -230,7 +228,6 @@ const Utils = {
 			// move the document.body
 			move(val);
 			// do the animation unless its over
-			//Log.db(currentTime,duration)
 			if (currentTime < duration) {
 				requestAnimFrame(animateScroll);
 			}

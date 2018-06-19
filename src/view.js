@@ -1,4 +1,3 @@
-import Log from './log';
 import Utils from './utils';
 import DOM from './dom';
 import Emmet from './emmet';
