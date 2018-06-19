@@ -1,6 +1,6 @@
 {
   "name": "kerneljsorthvid",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Very slim ES6 javascript framework. Based around a View class. Kerneljs is aimed at progressive enhanced web development",
   "main": "dist/kernel.js",
   "scripts": {
